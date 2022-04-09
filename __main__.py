@@ -10,14 +10,28 @@
 #
 # *******************************************************************************************
 
+"""
+This file contains the application entry point
+"""
+
 __author__ = "James Dooley"
 __license__ = "MIT"
 __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
 
+import argh
+import core.commands as commands
+
+
 def main():
-    print('Hello, world')
+    # Set up the command line parser
+    cmd_parser: argh.ArghParser = argh.ArghParser()
+    cmd_parser.add_commands([commands.create_project, commands.delete_project, commands.generate_code,
+                             commands.delete_code])
+
+    # Execute requested command
+    cmd_parser.dispatch()
 
 
 if __name__ == '__main__':
