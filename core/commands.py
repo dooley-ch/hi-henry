@@ -26,6 +26,7 @@ from datetime import datetime
 from pathlib import Path
 from argh import arg, named, confirm
 import core.utils as utils
+import core.generate as generate
 
 
 @named('create')
@@ -101,7 +102,11 @@ def generate_code(database: str, folder: str | None = None) -> None:
         if not output_folder.exists():
             output_folder.mkdir(parents=True, exist_ok=True)
 
-        return 'Generate code'
+        # Get the connection info
+        connection_info = utils.get_config(file)
+
+        # Generate code
+        return generate.generate_code(connection_info, output_folder)
 
     return "No code generated"
 

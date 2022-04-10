@@ -62,10 +62,90 @@ be overwritten.
 
 ## Design
 
+### Concept
+
+
 ### Configuration
 
-### Schema Moodel
+### Schema Model
 
+The schema model is represented by a series of associated interfaces.
+
+```mermaid
+    classDiagram
+    
+    class ITable{
+        <<interface>>
+        +str name
+        List~IColumn~ columns
+        List~IIndex~ indexes
+        List~IForeignKey~ foreign_keys 
+    }
+    
+    class IView{
+        <<interface>>
+        +str name
+        List~IColumn~ columns
+    }
+
+    class IProcedure{
+        <<interface>>
+        +str name
+        List~IColumn~ columns
+        List~IParam~ params
+    }
+        
+    class IDatabase{
+        <<interface>>
+        +str name
+        List~ITable~ tables
+        List~IView~ views
+        List~IProcedure~ procedures
+    }   
+    
+    class IColumn{
+        <<interface>>
+        +int order
+        +str name
+        +str type
+        +str param
+    }   
+    
+    class IParam{
+        <<interface>>
+        +int order
+        +str name
+        +str type
+    }
+    
+    class IIndex{
+        <<interface>>
+        +str name
+        +str type
+        +bool unique
+        List~IColumn~ columns
+    }
+    
+    class IForeignKey{
+        <<interface>>
+        +str name
+        List~IColumn~ columns
+        +str foreign_table
+        List~IColumn~ foreign_columns
+    }
+    
+    IDatabase ..> ITable
+    IDatabase ..> IView
+    IDatabase ..> IProcedure
+    ITable ..> IColumn
+    ITable ..> IIndex
+    ITable ..> IForeignKey
+    IView ..> IColumn
+    IProcedure ..> IColumn
+    IProcedure ..> IParam
+    IForeignKey ..> IColumn
+    
+```
 ### Data Types
 
 ### Code Generation

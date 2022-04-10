@@ -61,6 +61,13 @@ class _ConfigFile(pydantic.BaseSettings):
     host: str = '127.0.0.1'
     port: int = 3306
 
+    @pydantic.validator('driver')
+    @classmethod
+    def driver_is_valid(cls, value: str) -> str:
+        if value not in ['mysql']:
+            raise ValueError(f"{value} is not a valid database driver!")
+        return value
+
     class Config:
         case_sensitive = False
         env_prefix = 'hih_'

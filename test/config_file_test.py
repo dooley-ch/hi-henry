@@ -60,3 +60,13 @@ def test_invalid_file() -> None:
 
     with pytest.raises(ValidationError):
         utils.get_config(file)
+
+
+def test_invalid_driver() -> None:
+    """
+    This function tests an invalid file
+    """
+    file: Path = Path(__file__).parent.joinpath('data', 'invalid_driver_file.env')
+
+    with pytest.raises(ValidationError):
+        utils.get_config(file)
