@@ -112,7 +112,19 @@ def delete_code(folder: str | None = None) -> None:
     This method deletes the generated code
     :param folder: If provided, code will be deleted from this folder
     """
-    if confirm('Are you sure you wish to delete the code', default=True):
-        return 'Delete code'
-    else:
-        return "Don't delete code"
+    # Make sure the folder and contents exists
+    output_folder: Path = utils.get_output_folder()
+    if folder:
+        output_folder = folder
+    if not output_folder.exists():
+        return f"Code folder not found: {output_folder}."
+
+    # Makre sure there are files to delete
+    files = list(output_folder.glob('*.py'))
+
+    if files:
+        if confirm('Are you sure you wish to delete the code', default=True):
+            for file in files:
+                file.unlink()
+
+    return "No code files deleted."
