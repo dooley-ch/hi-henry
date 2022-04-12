@@ -74,6 +74,8 @@ The tool supports a particular database design pattern:
 - Each table has a lock_version field that is used to support optimistic concurrency.
 - Each table has a created_at field that indicates when the record was created
 - Each table has an updated_at field that indicates when the record was last updated
+- Enums are favoured over triggers and constraints
+- Table creating and seed data insertion are scripted
 
 
 
