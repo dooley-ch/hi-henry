@@ -106,7 +106,7 @@ def generate_code(database: str, folder: str | None = None) -> None:
         connection_info = utils.get_config(file)
 
         # Generate code
-        return generate.generate_code(connection_info, output_folder)
+        return generate.write_code(connection_info, output_folder)
 
     return "No code generated"
 

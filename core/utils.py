@@ -22,6 +22,7 @@ __status__ = "Production"
 __all__ = ['get_config_folder', 'get_logs_folder', 'get_output_folder', 'ConnectionInfo', 'get_config']
 
 import pathlib
+from abc import abstractmethod
 from typing import Protocol
 import pydantic
 
@@ -31,21 +32,33 @@ class ConnectionInfo(Protocol):
     This class defines the interface that must be implemented to support the connection
     to a database
     """
+    @property
+    @abstractmethod
     def database(self) -> str:
         ...
 
+    @property
+    @abstractmethod
     def user(self) -> str:
         ...
 
+    @property
+    @abstractmethod
     def driver(self) -> str:
         ...
 
+    @property
+    @abstractmethod
     def password(self) -> str:
         ...
 
+    @property
+    @abstractmethod
     def host(self) -> str:
         ...
 
+    @property
+    @abstractmethod
     def port(self) -> int:
         ...
 
@@ -61,7 +74,6 @@ class _ConfigFile(pydantic.BaseSettings):
     host: str = '127.0.0.1'
     port: int = 3306
 
-    @pydantic.validator('driver')
     @classmethod
     def driver_is_valid(cls, value: str) -> str:
         if value not in ['mysql']:
