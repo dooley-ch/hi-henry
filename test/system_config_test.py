@@ -1,12 +1,12 @@
 # *******************************************************************************************
-#  File:  __init__.py
+#  File:  system_config_test.py
 #
-#  Created: 10-04-2022
+#  Created: 13-04-2022
 #
 #  Copyright (c) 2022 James Dooley <james@dooley.ch>
 #
 #  History:
-#  10-04-2022: Initial version
+#  13-04-2022: Initial version
 #
 # *******************************************************************************************
 
@@ -15,9 +15,12 @@ __license__ = "MIT"
 __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
-__all__ = ['write_code', 'IDatabaseExplorer', 'IDatabase', 'ITable', 'IColumn', 'register_plugin', 'unregister_plugin',
-           'create_plugin', 'load_plugin']
 
-from ._generate import write_code
-from ._core import *
-from ._schema_explorer_factory import *
+import core.system_config as config
+
+
+def test_get_plugins() -> None:
+    plugins = config.get_plugins()
+
+    assert plugins
+    assert len(plugins) >= 1

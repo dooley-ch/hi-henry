@@ -22,9 +22,16 @@ __status__ = "Production"
 
 import argh
 import core.commands as commands
+import core.generate as generate
+import core.system_config as config
 
 
 def main():
+    # Register plugins
+    plugins = config.get_plugins()
+    for plugin in plugins:
+        generate.load_plugin(plugin.file)
+
     # Set up the command line parser
     cmd_parser: argh.ArghParser = argh.ArghParser()
     cmd_parser.add_commands([commands.create_project, commands.delete_project, commands.generate_code,

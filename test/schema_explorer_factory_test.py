@@ -1,12 +1,12 @@
 # *******************************************************************************************
-#  File:  mysql_schema_test.py
+#  File:  schema_explorer_factory_test.py
 #
-#  Created: 11-04-2022
+#  Created: 13-04-2022
 #
 #  Copyright (c) 2022 James Dooley <james@dooley.ch>
 #
 #  History:
-#  11-04-2022: Initial version
+#  13-04-2022: Initial version
 #
 # *******************************************************************************************
 
@@ -18,24 +18,21 @@ __status__ = "Production"
 
 from pathlib import Path
 
-import pytest
+import core.generate as generate
+import core.system_config as config
 import core.utils as utils
-from plugin.mysql_schema_explorer import MySqlSchemaExplorer
 
 
-@pytest.fixture()
-def connection_info():
+def test_load_and_create():
     file: Path = Path(__file__).parent.joinpath('config', 'mistral.env')
-    return utils.get_config(file)
+    conn_info: utils.ConnectionInfo = utils.get_config(file)
 
+    plugins = config.get_plugins()
+    for plugin in plugins:
+        generate.load_plugin(plugin.file)
 
-def test_idatabase(connection_info):
-    explorer = MySqlSchemaExplorer()
-    data = explorer.extract(connection_info)
+    explorer: generate.IDatabaseExplorer = generate.create_plugin('mysql', conn_info)
+    assert explorer
 
-    assert data
-    assert len(data.tables) == 29
-
-    table = data.tables['album']
-    assert table
-    assert len(table.columns) == 7
+    schema = explorer.extract()
+    assert schema

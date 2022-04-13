@@ -1,0 +1,22 @@
+# *******************************************************************************************
+#  File:  __init__.py
+#
+#  Created: 13-04-2022
+#
+#
+#
+#  Copyright (c) 2022 James Dooley <james@dooley.ch>
+#
+#  History:
+#  13-04-2022: Initial version
+#
+# *******************************************************************************************
+
+[[datamap]]
+name = "mysql-python"
+varchar = "str"
+char = "str"
+
+[[plugins]]
+driver = "mysql"
+file = "mysql_schema_explorer"

@@ -88,9 +88,9 @@ class _ConfigFile(pydantic.BaseSettings):
 def get_config(file: pathlib.Path) -> ConnectionInfo:
     """
     This method loads the configuration information from the given file and returns an
-    object consistent with the ConnectionInfo protocol
+    object consistent with the _ConnectionInfo protocol
     :param file: The file containing the configuration information
-    :return: An object consistent with the ConnectionInfo protocol
+    :return: An object consistent with the _ConnectionInfo protocol
     """
     return _ConfigFile(_env_file=file, _env_file_encoding='utf-8')
 

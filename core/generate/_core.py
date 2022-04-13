@@ -64,5 +64,5 @@ class IDatabase(Protocol):
 
 
 class IDatabaseExplorer(Protocol):
-    def extract(self, conn_info: utils.ConnectionInfo) -> IDatabase:
+    def extract(self) -> IDatabase:
         ...
