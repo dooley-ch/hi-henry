@@ -21,7 +21,7 @@ __maintainer__ = "James Dooley"
 __status__ = "Production"
 __all__ = ['create_project', 'delete_project', 'generate_code', 'delete_code']
 
-
+from logging import Logger, getLogger
 from datetime import datetime
 from pathlib import Path
 from argh import arg, named, confirm
@@ -64,6 +64,9 @@ def create_project(database: str, user: str, password: str, driver: str = 'mysql
     with open(file, 'w') as f:
         f.writelines(contents)
 
+    log: Logger = getLogger()
+    log.info(f"Configuration file created for: {database}")
+
     return 'Configuration file created'
 
 
@@ -79,6 +82,10 @@ def delete_project(database: str) -> None:
         return f"No configuration file exists for the database: {database.lower()}."
 
     file.unlink()
+
+    log: Logger = getLogger()
+    log.info(f"Configuration file deleted: {database}")
+
     return 'File deleted successfully'
 
 
@@ -131,5 +138,8 @@ def delete_code(folder: str | None = None) -> None:
         if confirm('Are you sure you wish to delete the code', default=True):
             for file in files:
                 file.unlink()
+
+    log: Logger = getLogger()
+    log.info(f"Code deleted from folder: {output_folder}")
 
     return "No code files deleted."

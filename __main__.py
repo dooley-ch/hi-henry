@@ -21,12 +21,18 @@ __maintainer__ = "James Dooley"
 __status__ = "Production"
 
 import argh
+from logging.config import fileConfig
 import core.commands as commands
 import core.generate as generate
 import core.system_config as config
+import core.utils as utils
 
 
 def main():
+    # Set up logging
+    config_file = utils.get_config_folder().joinpath('logging.cfg')
+    fileConfig(config_file)
+
     # Register plugins
     plugins = config.get_plugins()
     for plugin in plugins:

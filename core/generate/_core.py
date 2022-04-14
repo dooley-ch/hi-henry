@@ -17,48 +17,72 @@ __maintainer__ = "James Dooley"
 __status__ = "Production"
 __all__ = ['IDatabaseExplorer', 'IDatabase', 'ITable', 'IColumn']
 
+from abc import abstractmethod
 from typing import Protocol, Dict
-import core.utils as utils
 
 
 class IColumn(Protocol):
+    @property
+    @abstractmethod
     def order(self) -> int:
         ...
 
+    @property
+    @abstractmethod
     def name(self) -> str:
         ...
 
+    @property
+    @abstractmethod
     def type(self) -> str:
         ...
 
+    @property
+    @abstractmethod
     def length(self) -> int:
         ...
 
+    @property
+    @abstractmethod
     def default(self) -> str | None:
         ...
 
+    @property
+    @abstractmethod
     def is_nullable(self) -> bool:
         ...
 
+    @property
+    @abstractmethod
     def is_key(self) -> bool:
         ...
 
+    @property
+    @abstractmethod
     def is_unique(self) -> bool:
         ...
 
 
 class ITable(Protocol):
+    @property
+    @abstractmethod
     def name(self) -> str:
         ...
 
+    @property
+    @abstractmethod
     def columns(self) -> Dict[str, IColumn]:
         ...
 
 
 class IDatabase(Protocol):
+    @property
+    @abstractmethod
     def name(self) -> str:
         ...
 
+    @property
+    @abstractmethod
     def tables(self) -> Dict[str, ITable]:
         ...
 
