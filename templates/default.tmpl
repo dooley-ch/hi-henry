@@ -1,0 +1,25 @@
+# *******************************************************************************************
+#  File:  ${file_name}
+#
+#  Created: ${create_date}
+#
+#  Auto generated code
+# *******************************************************************************************
+
+__author__ = "James Dooley"
+__license__ = "MIT"
+__version__ = "1.0.0"
+__maintainer__ = "James Dooley"
+__status__ = "Production"
+
+import pydantic
+
+
+%for class_entry in classes:
+class ${class_entry.name}(pydantic.BaseModel):
+    %for column_entry in class_entry.columns:
+    ${column_entry.name}: ${column_entry.definition}
+    %endfor
+
+
+%endfor

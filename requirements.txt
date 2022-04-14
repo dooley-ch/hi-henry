@@ -1,8 +1,12 @@
 argh==0.26.2
 attrs==21.4.0
 iniconfig==1.1.1
+Mako==1.2.0
+MarkupSafe==2.1.1
+mysql-connector-python==8.0.28
 packaging==21.3
 pluggy==1.0.0
+protobuf==3.20.0
 py==1.11.0
 pydantic==1.9.0
 pyparsing==3.0.8
@@ -10,4 +14,3 @@ pytest==7.1.1
 python-dotenv==0.20.0
 tomli==2.0.1
 typing_extensions==4.1.1
-mysql-connector-python==8.0.28

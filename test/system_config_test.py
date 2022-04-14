@@ -24,3 +24,9 @@ def test_get_plugins() -> None:
 
     assert plugins
     assert len(plugins) >= 1
+
+
+def test_get_data_map() -> None:
+    map = config.get_data_map('mysql')
+
+    assert map

@@ -3,7 +3,7 @@
 #
 #  Created: 13-04-2022
 #
-#
+#  Description: This file contains the system configuration
 #
 #  Copyright (c) 2022 James Dooley <james@dooley.ch>
 #
@@ -12,10 +12,29 @@
 #
 # *******************************************************************************************
 
-[[datamap]]
-name = "mysql-python"
-varchar = "str"
+[datamap_mysql]
+tinyint = "int"
+smallint = "int"
+mediumint = "int"
+int = "int"
+bigint = "int"
+decimal = "float"
+float = "float"
+double = "float"
+date = "datetime"
+datetime = "datetime"
+timestamp = "datetime"
 char = "str"
+varchar = "str"
+binary = "str"
+varbinary = "str"
+tinytext = "str"
+text = "str"
+mediumtext = "str"
+longtext = "str"
+enum = "str"
+set = "str"
+json = "str"
 
 [[plugins]]
 driver = "mysql"

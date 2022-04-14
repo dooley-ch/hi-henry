@@ -43,3 +43,13 @@ def get_plugins() -> List[PluginInfo] | None:
     if 'plugins' in content.keys():
         plugins = content['plugins']
         return [PluginInfo(**item) for item in plugins]
+
+
+def get_data_map(driver: str) -> Dict[str, str]:
+    content = _load_config()
+
+    key: str = f"datamap_{driver}"
+
+    if key in content.keys():
+        map = content[key]
+        return map

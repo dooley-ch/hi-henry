@@ -19,7 +19,8 @@ __license__ = "MIT"
 __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
-__all__ = ['get_config_folder', 'get_logs_folder', 'get_output_folder', 'ConnectionInfo', 'get_config']
+__all__ = ['get_config_folder', 'get_logs_folder', 'get_output_folder', 'ConnectionInfo', 'get_config',
+           'get_templates_folder']
 
 import pathlib
 from abc import abstractmethod
@@ -114,3 +115,10 @@ def get_output_folder() -> pathlib.Path:
     This method returns the location of the logs' folder
     """
     return pathlib.Path(__file__).parent.parent.joinpath('generated')
+
+
+def get_templates_folder() -> pathlib.Path:
+    """
+    This method returns the location of the logs' folder
+    """
+    return pathlib.Path(__file__).parent.parent.joinpath('templates')
