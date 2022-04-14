@@ -18,7 +18,7 @@ __status__ = "Production"
 __all__ = ['IDatabaseExplorer', 'IDatabase', 'ITable', 'IColumn']
 
 from abc import abstractmethod
-from typing import Protocol, Dict
+from typing import Protocol, TypedDict
 
 
 class IColumn(Protocol):
@@ -63,6 +63,11 @@ class IColumn(Protocol):
         ...
 
 
+class ColumnDict(TypedDict):
+    name: str
+    column: IColumn
+
+
 class ITable(Protocol):
     @property
     @abstractmethod
@@ -71,8 +76,13 @@ class ITable(Protocol):
 
     @property
     @abstractmethod
-    def columns(self) -> Dict[str, IColumn]:
+    def columns(self) -> ColumnDict:
         ...
+
+
+class TableDict(TypedDict):
+    name: str
+    table: ITable
 
 
 class IDatabase(Protocol):
@@ -83,7 +93,7 @@ class IDatabase(Protocol):
 
     @property
     @abstractmethod
-    def tables(self) -> Dict[str, ITable]:
+    def tables(self) -> TableDict:
         ...
 
 
