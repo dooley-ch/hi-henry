@@ -4,7 +4,14 @@
 
 ## Introduction
 
+The purpose of "Hi Henry" is to generate [Pydantic](https://pydantic-docs.helpmanual.io) classes based on the tables defined in a database.  The applicaton 
+currently only supports the MySQL database system.  But has been designed to be extended to support other DBMS systems
+through a plugin architecture and a data type mapping mechanisim.
+
 ## Install
+
+The application as been designed as a runnable folder.  Simply download a copy of the source code to a
+folder and run it using the commands and parameters described below.
 
 ## Usage
 
@@ -77,8 +84,6 @@ The tool supports a particular database design pattern:
 - Enums are favoured over triggers and constraints
 - Table creating and seed data insertion are scripted
 
-
-
 ```mermaid
     erDiagram
         data_table {
@@ -111,6 +116,37 @@ When a record is changed the following must occur:
 - If an audit is required, then an entry must be created in the corresponding xxx table
 
 ### Configuration
+
+All the configuration files are stored in the config folder.
+
+#### Logging
+
+The application logging is configured via the logging.cfg file.  Logging is configured to write to three files, 
+as follows:
+
+| File         | Description                                                                          |
+|--------------|--------------------------------------------------------------------------------------|
+| main.log     | All log messages are written to this file                                            |
+| error.log    | This file is used to log all error messages and above, to make it easy to find them. |
+| activity.log | This file is used to detail the steps in the process of generating code              |
+
+The root logger is configured to:
+- Log all messages to the main.log file
+- Log error messages to the error.log
+- Log error messages to the console
+
+A second logger (progress_logger) is configured to:
+- Log Info and above messages to the activity.log file to show how the application goes through the process of generating code.
+- Propigate the messages to teh root logger
+
+
+#### Plugin
+
+The information for configurng the plugins is stored in the system.toml file and consists of two parts:
+
+- The plugin entry which defines the plugin 
+- The data map entry which maps the database types to the Python and Pydantic data types
+
 
 ### Schema Model
 
@@ -150,5 +186,8 @@ The schema model is represented by a series of associated interfaces, which must
     IDatabase ..> ITable
     ITable ..> IColumn
 ```
+
+### Extendability
+
 
 ### Code Generation
