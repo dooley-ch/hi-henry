@@ -178,7 +178,7 @@ CreatePluginFunction: TypeAlias = Callable[[IDatabaseConnectionInfo], IDatabaseE
 @runtime_checkable
 class IColumnDefinition(Protocol):
     """
-    This class
+    This class defines the column interface
     """
     name: str
     definition: str
@@ -189,6 +189,9 @@ ColumnDefinitionList: TypeAlias = List[IColumnDefinition]
 
 @runtime_checkable
 class IClassDefinition(Protocol):
+    """
+    This class defines the class interface
+    """
     name: str
     columns: ColumnDefinitionList = list()
 

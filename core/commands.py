@@ -48,7 +48,7 @@ def create_project(database: str, user: str, password: str, driver: str = 'mysql
     """
     file: Path = utils.get_config_folder().joinpath(f"{database.lower()}.env")
     if file.exists():
-        return f"A configuration for the database: {database.lower()}, exists."
+        return f"A project for the database: {database.lower()}, exists."
 
     now: datetime = datetime.now()
     now_str: str = now.strftime("%m/%d/%Y, %H:%M:%S")
@@ -67,13 +67,13 @@ def create_project(database: str, user: str, password: str, driver: str = 'mysql
         f.writelines(contents)
 
     log: Logger = getLogger()
-    log.info(f"Configuration file created for: {database}")
+    log.info(f"Project file created for: {database}")
 
-    return 'Configuration file created'
+    return 'Project file created'
 
 
 @named('delete')
-@arg('database', help='The name of the database to use in the project')
+@arg('database', help='The name of the database used in the project')
 def delete_project(database: str) -> None:
     """
     This method deletes an existing project
@@ -81,18 +81,18 @@ def delete_project(database: str) -> None:
     """
     file: Path = utils.get_config_folder().joinpath(f"{database.lower()}.env")
     if not file.exists():
-        return f"No configuration file exists for the database: {database.lower()}."
+        return f"No project file exists for the database: {database.lower()}."
 
     file.unlink()
 
     log: Logger = getLogger()
-    log.info(f"Configuration file deleted: {database}")
+    log.info(f"Project file deleted: {database}")
 
     return 'File deleted successfully'
 
 
 @named('generate')
-@arg('database', help='The name of the database to use in the project')
+@arg('database', help='The name of the database to use in the code generation')
 def generate_code(database: str, folder: str | None = None) -> None:
     """
     This method generates the code for the given database
