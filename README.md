@@ -106,7 +106,7 @@ to this table.
 
 When a new record is inserted into the table, the lock_version field is set to 1 and the created_at and updated_at 
 fields are  set to the current date and time.  If the action needs to be audited then a new record must be created in 
-the corresponding xxx table.  Each table has its own audit tabe to reduce the possibilities of a bottle neck that can 
+the corresponding xxx table.  Each table has its own audit tabe to reduce the possibilities of a bottleneck that can 
 occur in using a centeral logging table.
 
 When a record is changed the following must occur:
@@ -189,5 +189,51 @@ The schema model is represented by a series of associated interfaces, which must
 
 ### Extendability
 
+The application has been designed to be extended in terms of supporting other DBMS systems.  This is done by 
+implementing the extraction process as a plugin model.  The plugin needs to deliver the schema using the interfaces 
+described above and the module needs to support two additional interfaces:
+
+```mermaid
+    classDiagram
+    
+    class IPluginInterface{
+        <<interface>>
+        +initialize()
+    }
+
+    class IDatabaseExplorer{
+        <<interface>>
+        +__init__(connection_info)
+        +extract()
+    }
+```
+The IPluginInterface is used to register the plugin with the application.  The module is loaded by the application based
+on the definition provided by the system.toml file and the initialize() is called.  Within the method the necessary 
+methods are called to register the plugin.
+
+The plugin itself must implement the IDatabaseExplorer interface.  This interface is responsible for delivering the 
+schema to the application.
+
+The application discovers the plugins by reading the system.toml file.  For this to happen there needs to be two entries
+in the system.toml file:
+
+- A plugins entry that tells the application the name database driver being supported and the name of the module containing the plugin.
+- A data map entry that maps the DBMS native data types to their Python/Pydantic types.
+
+The MySQL plugin located in the plugin folder can be used as implementation reference model.
 
 ### Code Generation
+
+The interaction between the main application modules is broadly as follows:
+
+```mermaid
+    sequenceDiagram
+        Main->>+Generate: Generate code (generate_code)
+        Generate->>+Utils: Get project file (get_config)
+        Utils-->>-Generate: Project configuration
+        Generate->>+Plugin: Get schema (extract)
+        Plugin-->>-Generate: Schema (IDatabase)
+        Generate->>+Templates: Generate code (create_code_file_content)
+        Templates-->>-Generate: File content
+        Generate-->>-Main: Write file      
+```
