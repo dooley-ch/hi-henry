@@ -24,6 +24,7 @@ __all__ = ['generate_code']
 import pathlib
 import pydantic
 from typing import List
+from logging import Logger, getLogger
 import core.custom_types as types
 import core.system_config as config
 import core.utils as utils
@@ -76,6 +77,7 @@ def _build_class_definition(table: types.ITable, data_map: types.DataTypeMap) ->
     This function builds the class definition to pass to the template engine, so it can create
     the class entry in the output file
     """
+    log: Logger = getLogger()
     class_def = _ClassDefinition(name=_build_class_name(table.name))
 
     col: types.IColumn
@@ -83,6 +85,8 @@ def _build_class_definition(table: types.ITable, data_map: types.DataTypeMap) ->
         class_def.columns.append(_ColumnDefinition(name=col.name,
                                                    definition=_get_data_type_definition(col.name, col.type,
                                                                                         col.length, data_map)))
+        log.debug(f"Added column definition for table: {table.name} -> {col.name}")
+
     return class_def
 
 
@@ -90,6 +94,9 @@ def generate_code(project: types.IProject, output_folder: pathlib.Path = None) -
     """
     This function generates the code for a project and writes it to the output folder
     """
+    log: Logger = getLogger('progress_logger')
+    error_log: Logger = getLogger()
+
     explorer: types.IDatabaseExplorer = create_plugin(project.driver, project)
     schema: types.IDatabase = explorer.extract()
 
@@ -98,13 +105,23 @@ def generate_code(project: types.IProject, output_folder: pathlib.Path = None) -
 
     # Map schema to template classes
     classes: List[types.IClassDefinition] = list()
-    for _, table in schema.tables.items():
-        class_def = _build_class_definition(table, data_map)
-        classes.append(class_def)
+    try:
+        for _, table in schema.tables.items():
+            class_def = _build_class_definition(table, data_map)
+
+            log.info(f"Class definition generated for table: {table.name}")
+            classes.append(class_def)
+    except Exception as e:
+        error_log.exception(e)
+        raise
 
     # Generate code
-    output_file_name: str = f"_{project.database}_model.py"
-    content: List[str] = create_code_file_content(output_file_name, classes)
+    try:
+        output_file_name: str = f"_{project.database}_model.py"
+        content: List[str] = create_code_file_content(output_file_name, classes)
+    except Exception as e:
+        error_log.exception(e)
+        raise
 
     # Write file
     if output_folder is None:
@@ -112,6 +129,10 @@ def generate_code(project: types.IProject, output_folder: pathlib.Path = None) -
 
     output_file: pathlib.Path = output_folder.joinpath(output_file_name)
     with open(output_file, 'w') as file:
-        file.writelines(content)
+        try:
+            file.writelines(content)
+        except Exception as e:
+            error_log.exception(e)
+            raise
 
     return "Code generated successfully"
