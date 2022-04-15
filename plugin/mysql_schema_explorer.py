@@ -25,8 +25,7 @@ from abc import abstractmethod
 from typing import Protocol, Dict
 from contextlib import contextmanager
 from mysql.connector import connect, MySQLConnection, DatabaseError
-# noinspection PyUnresolvedReferences
-from mysql.connector.cursor import MySQLCursor, MySQLCursorNamedTuple, MySQLCursorDict
+from mysql.connector.cursor import MySQLCursor, MySQLCursorDict
 from logging import Logger, getLogger
 import pydantic
 from core.generate import register_plugin
@@ -69,6 +68,9 @@ class _ConnectionInfo(Protocol):
 
 
 class _Column(pydantic.BaseModel):
+    """
+    This class is used to return the definition of a column in a  MySQL database
+    """
     order: pydantic.PositiveInt
     name: str
     type: str
@@ -80,25 +82,40 @@ class _Column(pydantic.BaseModel):
 
 
 class _Table(pydantic.BaseModel):
+    """
+    This class is used to return the definition of a table in a MySQL database
+    """
     name: str
     columns: Dict[str, _Column] = dict()
 
 
 class _Database(pydantic.BaseModel):
+    """
+    This class is used to return the definition of a schema in a MySQL database
+    """
     name: str
     tables: Dict[str, _Table] = dict()
 
 
 class MySqlSchemaExplorer:
+    """
+    This class is used to extract the schema of a database in a MySQL database
+    """
     _log: Logger
     _conn_info: _ConnectionInfo
 
     def __init__(self, conn_info: _ConnectionInfo):
+        """
+        Creates an instance of the class with the given parameters
+        """
         self._log = getLogger('MySqlSchemaExplorer')
         self._conn_info = conn_info
 
     @staticmethod
     def get_database_connection(conn_info: _ConnectionInfo) -> MySQLConnection:
+        """
+        Returns a connection to a MySQL database
+        """
         return connect(user=conn_info.user, password=conn_info.password, host=conn_info.host,
                        port=conn_info.port, database=conn_info.database, use_pure=True,
                        consume_results=True)
@@ -106,7 +123,7 @@ class MySqlSchemaExplorer:
     @contextmanager
     def open_database(self, context: str) -> MySQLConnection:
         """
-        This function provides an open database context manager
+        This method provides an open database context manager
         """
         conn: MySQLConnection | None = None
 
@@ -125,6 +142,9 @@ class MySqlSchemaExplorer:
     @contextmanager
     def open_database_cursor(self, context: str, named_tuple: bool = False,
             dictionary: bool = False):
+        """
+        This method returns am open cursor context manager
+        """
         cursor: MySQLCursor
 
         with self.open_database(context) as db:
@@ -146,6 +166,9 @@ class MySqlSchemaExplorer:
 
     @staticmethod
     def _extract_tables(cursor: MySQLCursorDict, db: _Database):
+        """
+        This method extacts the table definitions from the database
+        """
         cursor.execute(''"SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = %s;""", (db.name,))
         table_names = cursor.fetchall()
         if table_names:
@@ -156,6 +179,9 @@ class MySqlSchemaExplorer:
 
     @staticmethod
     def extract_columns(cursor: MySQLCursorDict, db_name: str, table: _Table):
+        """
+        This method extrcts the column definitions for a table from the database
+        """
         cursor.execute("""SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, COLUMN_DEFAULT, IS_NULLABLE, 
                                     COLUMN_KEY, EXTRA FROM INFORMATION_SCHEMA.COLUMNS
                         WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s ORDER BY ORDINAL_POSITION;""", (db_name, table.name))
@@ -185,6 +211,7 @@ class MySqlSchemaExplorer:
             table.columns[column.name] = column
 
     def extract(self) -> _Database | None:
+
         db = _Database(name=self._conn_info.database)
 
         cursor: MySQLCursorDict
@@ -197,4 +224,7 @@ class MySqlSchemaExplorer:
 
 
 def initialize() -> None:
+    """
+    This function registers the plugin with the application
+    """
     register_plugin('mysql', MySqlSchemaExplorer)

@@ -19,49 +19,12 @@ __license__ = "MIT"
 __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
-__all__ = ['get_config_folder', 'get_logs_folder', 'get_output_folder', 'ConnectionInfo', 'get_config',
+__all__ = ['get_config_folder', 'get_logs_folder', 'get_output_folder', 'get_config',
            'get_templates_folder']
 
 import pathlib
-from abc import abstractmethod
-from typing import Protocol
 import pydantic
-
-
-class ConnectionInfo(Protocol):
-    """
-    This class defines the interface that must be implemented to support the connection
-    to a database
-    """
-    @property
-    @abstractmethod
-    def database(self) -> str:
-        ...
-
-    @property
-    @abstractmethod
-    def user(self) -> str:
-        ...
-
-    @property
-    @abstractmethod
-    def driver(self) -> str:
-        ...
-
-    @property
-    @abstractmethod
-    def password(self) -> str:
-        ...
-
-    @property
-    @abstractmethod
-    def host(self) -> str:
-        ...
-
-    @property
-    @abstractmethod
-    def port(self) -> int:
-        ...
+import core.custom_types as types
 
 
 class _ConfigFile(pydantic.BaseSettings):
@@ -86,7 +49,7 @@ class _ConfigFile(pydantic.BaseSettings):
         env_prefix = 'hih_'
 
 
-def get_config(file: pathlib.Path) -> ConnectionInfo:
+def get_config(file: pathlib.Path) -> types.IDatabaseConnectionInfo:
     """
     This method loads the configuration information from the given file and returns an
     object consistent with the _ConnectionInfo protocol

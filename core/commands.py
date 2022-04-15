@@ -21,11 +21,13 @@ __maintainer__ = "James Dooley"
 __status__ = "Production"
 __all__ = ['create_project', 'delete_project', 'generate_code', 'delete_code']
 
+import pathlib
 from logging import Logger, getLogger
 from datetime import datetime
 from pathlib import Path
 from argh import arg, named, confirm
 import core.utils as utils
+import core.custom_types as types
 import core.generate as generate
 
 
@@ -104,16 +106,18 @@ def generate_code(database: str, folder: str | None = None) -> None:
     if confirm('Are you sure you wish to generate code', default=True):
         # Ensure the output folder exists
         output_folder: Path = utils.get_output_folder()
+
         if folder:
-            output_folder = folder
+            output_folder = pathlib.Path(folder)
+
         if not output_folder.exists():
             output_folder.mkdir(parents=True, exist_ok=True)
 
         # Get the connection info
-        connection_info = utils.get_config(file)
+        project: types.IProject = utils.get_config(file)
 
         # Generate code
-        return generate.build_file_content(connection_info, output_folder)
+        return generate.generate_code(project, output_folder)
 
     return "No code generated"
 

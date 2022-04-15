@@ -10,6 +10,10 @@
 #
 # *******************************************************************************************
 
+"""
+This module provides access to the system parameters
+"""
+
 __author__ = "James Dooley"
 __license__ = "MIT"
 __version__ = "1.0.0"
@@ -26,11 +30,17 @@ import core.utils as utils
 
 
 class PluginInfo(pydantic.BaseModel):
+    """
+    This class represents the definition of a database explorer plugin in the system config file
+    """
     driver: str
     file: str
 
 
 def _load_config() -> Dict[str, List]:
+    """
+    This function loads the data contained in the system.toml
+    """
     file: Path = utils.get_config_folder().joinpath('system.toml')
 
     with open(file, "rb") as f:
@@ -38,6 +48,9 @@ def _load_config() -> Dict[str, List]:
 
 
 def get_plugins() -> List[PluginInfo] | None:
+    """
+    This function returns the plugin definitions from the system.toml file
+    """
     content = _load_config()
 
     if 'plugins' in content.keys():
@@ -45,11 +58,14 @@ def get_plugins() -> List[PluginInfo] | None:
         return [PluginInfo(**item) for item in plugins]
 
 
-def get_data_map(driver: str) -> Dict[str, str]:
+def get_data_map(driver: str) -> Dict[str, str] | None:
+    """
+    This function returns a data map definition from the system.toml file
+    """
     content = _load_config()
 
     key: str = f"datamap_{driver}"
 
     if key in content.keys():
-        map = content[key]
-        return map
+        data_map = content[key]
+        return data_map

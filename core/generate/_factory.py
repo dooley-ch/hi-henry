@@ -1,5 +1,5 @@
 # *******************************************************************************************
-#  File:  _schema_explorer_factory.py
+#  File:  _factory.py
 #
 #  Created: 13-04-2022
 #
@@ -11,7 +11,7 @@
 # *******************************************************************************************
 
 """
-This module hands the management of schema explorer plugins
+This module hands the management of database explorer plugins
 """
 
 __author__ = "James Dooley"
@@ -23,24 +23,16 @@ __all__ = ['register_plugin', 'unregister_plugin', 'create_plugin', 'load_plugin
 
 import importlib
 from logging import Logger, getLogger
-from typing import Dict, Callable, Protocol
-from core.utils import ConnectionInfo
-from ._core import IDatabaseExplorer
+from typing import Dict
 
-_plugin_creation_funcs: Dict[str, Callable[..., IDatabaseExplorer]] = dict()
-
-
-class PluginInterface(Protocol):
-    """
-    This is the interface all database explorer plugin modules must support
-    """
-
-    @staticmethod
-    def initialize() -> None:
-        ...
+import custom_types
+import core.custom_types as types
 
 
-def register_plugin(driver: str, create_function: Callable[..., IDatabaseExplorer]) -> None:
+_plugin_creation_funcs: Dict[str, types.CreatePluginFunction] = dict()
+
+
+def register_plugin(driver: str, create_function: types.CreatePluginFunction) -> None:
     """
     This function handles the registration of a plugin
     """
@@ -57,7 +49,7 @@ def unregister_plugin(driver: str) -> None:
     _plugin_creation_funcs.pop(driver, None)
 
 
-def create_plugin(driver: str, conn_info: ConnectionInfo) -> IDatabaseExplorer:
+def create_plugin(driver: str, conn_info: types.IDatabaseConnectionInfo) -> types.IDatabaseExplorer:
     """
     This function creates a new database explorer instance for a given driver
     """
@@ -74,10 +66,13 @@ def create_plugin(driver: str, conn_info: ConnectionInfo) -> IDatabaseExplorer:
 
 
 def load_plugin(module_name: str) -> None:
+    """
+    This function loads a moudule containing a plugin and initializes it
+    """
     log: Logger = getLogger()
 
     try:
-        plugin_module: PluginInterface = importlib.import_module(f"plugin.{module_name}")
+        plugin_module: custom_types.IPluginInterface = importlib.import_module(f"plugin.{module_name}")
         if plugin_module:
             log.debug(f"Plugin module loaded: {module_name}")
             plugin_module.initialize()

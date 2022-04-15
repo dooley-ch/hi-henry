@@ -1,41 +1,35 @@
 # *******************************************************************************************
-#  File:  template_engine.py
+#  File:  _templates.py
 #
-#  Created: 14-04-2022
+#  Created: 15-04-2022
 #
 #  Copyright (c) 2022 James Dooley <james@dooley.ch>
 #
 #  History:
-#  14-04-2022: Initial version
+#  15-04-2022: Initial version
 #
 # *******************************************************************************************
+
+"""
+This module hands populate of the code template from the data supplied
+"""
 
 __author__ = "James Dooley"
 __license__ = "MIT"
 __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
-__all__ = ['create_code_file_content', 'ClassDefinition', 'ColumnDefinition']
+__all__ = ['create_code_file_content']
 
 import pathlib
 from datetime import datetime
 from typing import List
-import core.utils as utils
 import mako.template as mako
-import pydantic
+import core.utils as utils
+import core.custom_types as types
 
 
-class ColumnDefinition(pydantic.BaseModel):
-    name: str
-    definition: str
-
-
-class ClassDefinition(pydantic.BaseModel):
-    name: str
-    columns: List[ColumnDefinition] = list()
-
-
-def create_code_file_content(file_name: str, classes: List[ClassDefinition]) -> List[str] | None:
+def create_code_file_content(file_name: str, classes: List[types.IClassDefinition]) -> List[str] | None:
     template_file: pathlib.Path = utils.get_templates_folder().joinpath('default.tmpl')
     if not template_file.exists():
         return None

@@ -10,6 +10,10 @@
 #
 # *******************************************************************************************
 
+"""
+This package contains the plugins used to extract the database schema from a DBMS
+"""
+
 __author__ = "James Dooley"
 __license__ = "MIT"
 __version__ = "1.0.0"
