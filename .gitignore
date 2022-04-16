@@ -131,7 +131,8 @@ dmypy.json
 # Py Charm
 .idea
 config/*.env
-generated/*/
+generated/*
+!generated/*.gitkeep
 logs/*
 !logs/*.gitkeep
 test/config/*.*
