@@ -18,7 +18,7 @@ __license__ = "MIT"
 __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
-__all__ = ['IColumn', 'ColumnDict', 'ITable', 'TableDict', 'IDatabase', 'IDatabaseExplorer', 'IPluginInterface',
+__all__ = ['IColumn', 'ColumnList', 'ITable', 'TableList', 'IDatabase', 'IDatabaseExplorer', 'IPluginInterface',
            'IDatabaseConnectionInfo', 'CreatePluginFunction', 'IProject', 'IColumnDefinition', 'IClassDefinition',
            'DataTypeMap']
 
@@ -71,7 +71,7 @@ class IColumn(Protocol):
         ...
 
 
-ColumnDict: TypeAlias = Dict[str, IColumn]
+ColumnList: TypeAlias = List[IColumn]
 
 
 class ITable(Protocol):
@@ -85,11 +85,11 @@ class ITable(Protocol):
 
     @property
     @abc.abstractmethod
-    def columns(self) -> ColumnDict:
+    def columns(self) -> ColumnList:
         ...
 
 
-TableDict: TypeAlias = Dict[str, ITable]
+TableList: TypeAlias = List[ITable]
 
 
 class IDatabase(Protocol):
@@ -103,7 +103,7 @@ class IDatabase(Protocol):
 
     @property
     @abc.abstractmethod
-    def tables(self) -> TableDict:
+    def tables(self) -> TableList:
         ...
 
 

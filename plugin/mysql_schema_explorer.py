@@ -22,7 +22,7 @@ __status__ = "Production"
 __all__ = ['MySqlSchemaExplorer']
 
 from abc import abstractmethod
-from typing import Protocol, Dict
+from typing import Protocol, List
 from contextlib import contextmanager
 from mysql.connector import connect, MySQLConnection, DatabaseError
 from mysql.connector.cursor import MySQLCursor, MySQLCursorDict
@@ -86,7 +86,7 @@ class _Table(pydantic.BaseModel):
     This class is used to return the definition of a table in a MySQL database
     """
     name: str
-    columns: Dict[str, _Column] = dict()
+    columns: List[_Column] = list()
 
 
 class _Database(pydantic.BaseModel):
@@ -94,7 +94,7 @@ class _Database(pydantic.BaseModel):
     This class is used to return the definition of a schema in a MySQL database
     """
     name: str
-    tables: Dict[str, _Table] = dict()
+    tables: List[_Table] = list()
 
 
 class MySqlSchemaExplorer:
@@ -175,7 +175,7 @@ class MySqlSchemaExplorer:
             for table_name in table_names:
                 name = table_name['TABLE_NAME']
                 table = _Table(name=name)
-                db.tables[table.name] = table
+                db.tables.append(table)
 
     @staticmethod
     def extract_columns(cursor: MySQLCursorDict, db_name: str, table: _Table):
@@ -208,7 +208,7 @@ class MySqlSchemaExplorer:
 
             column = _Column(order=order, name=name, type=data_type, length=length, default=default,
                              is_nullable=is_nullable, is_key=is_key, is_unique=is_unique)
-            table.columns[column.name] = column
+            table.columns.append(column)
 
     def extract(self) -> _Database | None:
 
@@ -217,8 +217,8 @@ class MySqlSchemaExplorer:
         cursor: MySQLCursorDict
         with self.open_database_cursor('extract', dictionary=True) as cursor:
             self._extract_tables(cursor, db)
-            for item in db.tables.items():
-                MySqlSchemaExplorer.extract_columns(cursor, db.name, item[1])
+            for table in db.tables:
+                MySqlSchemaExplorer.extract_columns(cursor, db.name, table)
 
         return db
 

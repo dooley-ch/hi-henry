@@ -25,6 +25,7 @@ import pathlib
 import pydantic
 from typing import List
 from logging import Logger, getLogger
+import typer
 import core.custom_types as types
 import core.system_config as config
 import core.utils as utils
@@ -81,7 +82,7 @@ def _build_class_definition(table: types.ITable, data_map: types.DataTypeMap) ->
     class_def = _ClassDefinition(name=_build_class_name(table.name))
 
     col: types.IColumn
-    for _, col in table.columns.items():
+    for col in table.columns:
         class_def.columns.append(_ColumnDefinition(name=col.name,
                                                    definition=_get_data_type_definition(col.name, col.type,
                                                                                         col.length, data_map)))
@@ -106,11 +107,12 @@ def generate_code(project: types.IProject, output_folder: pathlib.Path = None) -
     # Map schema to template classes
     classes: List[types.IClassDefinition] = list()
     try:
-        for _, table in schema.tables.items():
-            class_def = _build_class_definition(table, data_map)
+        with typer.progressbar(schema.tables) as work:
+            for table in work:
+                class_def = _build_class_definition(table, data_map)
 
-            log.info(f"Class definition generated for table: {table.name}")
-            classes.append(class_def)
+                log.info(f"Class definition generated for table: {table.name}")
+                classes.append(class_def)
     except Exception as e:
         error_log.exception(e)
         raise
