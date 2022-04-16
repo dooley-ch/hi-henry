@@ -1,5 +1,6 @@
-argh==0.26.2
 attrs==21.4.0
+click==8.1.2
+colorama==0.4.4
 iniconfig==1.1.1
 Mako==1.2.0
 MarkupSafe==2.1.1
@@ -13,4 +14,5 @@ pyparsing==3.0.8
 pytest==7.1.1
 python-dotenv==0.20.0
 tomli==2.0.1
+typer==0.4.1
 typing_extensions==4.1.1

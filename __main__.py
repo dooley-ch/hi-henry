@@ -20,12 +20,11 @@ __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
 
-import argh
 from logging.config import fileConfig
-import core.commands as commands
 import core.generate as generate
 import core.system_config as config
 import core.utils as utils
+import core.command_line as command_line
 
 
 def main():
@@ -38,13 +37,8 @@ def main():
     for plugin in plugins:
         generate.load_plugin(plugin.file)
 
-    # Set up the command line parser
-    cmd_parser: argh.ArghParser = argh.ArghParser()
-    cmd_parser.add_commands([commands.create_project, commands.delete_project, commands.generate_code,
-                             commands.delete_code])
-
-    # Execute requested command
-    cmd_parser.dispatch()
+    # Process commands
+    command_line.app()
 
 
 if __name__ == '__main__':
