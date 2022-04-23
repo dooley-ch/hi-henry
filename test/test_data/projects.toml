@@ -1,0 +1,39 @@
+# *******************************************************************************************
+#  File:  projects.toml
+#
+#  Created: 22-04-2022
+#
+#  Description: This file contains the project definitions used by the application to generate
+#               code
+#
+#  Copyright (c) 2022 James Dooley <james@dooley.ch>
+#
+#  History:
+#  22-04-2022: Initial version
+#
+# *******************************************************************************************
+
+version = '1.0.0'
+
+[defaults]
+user = 'root'
+password = 'root*347'
+host = '127.0.0.1'
+port = 3306
+template = 'main.tmpl'
+explorer = 'mysql'
+generator = 'python'
+
+[projects]
+
+[projects.oak]
+name = 'oak'
+database = 'oak-dev'
+
+[projects.ash]
+name = 'ash'
+database = 'ash-dev'
+
+[projects.ceder]
+name = 'ceder'
+database = 'ceder-dev'

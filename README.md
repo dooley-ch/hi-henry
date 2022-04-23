@@ -4,9 +4,32 @@
 
 ## Introduction
 
-The purpose of "Hi Henry" is to generate [Pydantic](https://pydantic-docs.helpmanual.io) classes based on the tables defined in a database.  The applicaton 
-currently only supports the MySQL database system.  But has been designed to be extended to support other DBMS systems
-through a plugin architecture and a data type mapping mechanisim.
+The purpose of "Hi Henry" is to generate code to enable an application to access a database.  The applicaton 
+currently only supports the MySQL database system and generates Python code.  But has been designed to be extended to 
+support other DBMS systems and coding languages through a plugin architecture and a data type mapping mechanisim.
+
+## Projects 
+
+The application uses the concept of projects to group the information necessary to access a database or similar data 
+source and generate code.  The fully defined project supplies the following information:
+
+| Key       | Description                                                                  |
+|-----------|------------------------------------------------------------------------------|
+| name      | The project name                                                             |
+| template  | The name of the template to use in generate the code                         |
+| files     | Indicates if the generator should generate a file per class or a single file |
+| host      | The host where which the DBMS is running                                     |
+| port      | The port on which the DMBS is listening                                      | 
+| database  | The name of the database to use in generating code                           |
+| user      | The name of the database to use in generating code                           |
+| passport  | The user password to use to connect to the database                          |
+| explorer  | The schema extractor to use in order to obtain the database schema           |
+| generator | The generator to use in order to generate the code                           |
+
+The project configurations are stored in the config/projects.toml file.  The format provides for use of defaults that
+can be overwritten with project specific values.  Default values are stored in a single section titled: defaults, while
+individual project values are stored in subsections within the projects' section with the follow naming convention: 
+projects.{project name}
 
 ## Install
 
@@ -14,15 +37,6 @@ The application as been designed as a runnable folder.  Simply download a copy o
 folder and run it using the commands and parameters described below.
 
 ## Usage
-
-The application provides a command line interface and supports the following four commands:
-
-| Command  | Description                                                         |
-|----------|---------------------------------------------------------------------|
-| create   | creates a new configuration which can be used used to generate code |
-| delete   | deletes a previously created configuration                          |
-| generate | generates code based on a configuration                             |
-| clear    | deletes previously generated code                                   |
 
 ### create
 
