@@ -23,6 +23,7 @@ port = 3306
 template = 'main.tmpl'
 explorer = 'mysql'
 generator = 'python'
+multi_file = "No"
 
 [projects]
 

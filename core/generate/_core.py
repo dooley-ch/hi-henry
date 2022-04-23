@@ -98,10 +98,10 @@ def generate_code(project: types.IProject, output_folder: pathlib.Path = None) -
     log: Logger = getLogger('progress_logger')
     error_log: Logger = getLogger()
 
-    explorer: types.IDatabaseExplorer = create_plugin(project.driver, project)
+    explorer: types.IDatabaseExplorer = create_plugin(project.explorer, project)
     schema: types.IDatabase = explorer.extract()
 
-    data_map: types.DataTypeMap = config.get_data_map(project.driver)
+    data_map: types.DataTypeMap = config.get_data_map(project.explorer)
     data_map.setdefault('default', 'str')
 
     # Map schema to template classes

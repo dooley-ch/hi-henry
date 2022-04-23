@@ -22,6 +22,7 @@ __status__ = "Production"
 __all__ = ['app']
 
 import pathlib
+from typing import List
 from datetime import datetime
 from logging import Logger, getLogger
 from pathlib import Path
@@ -29,89 +30,43 @@ import typer
 import core.utils as utils
 import core.custom_types as types
 import core.generate as generate
+import core.project_config as project_config
+
 
 app = typer.Typer(
     help="""This application extracts a database schema and generates a set of Pydantic classes representing 
     the tables in the database.""")
 
 
-@app.command('create', help="This command creates a new project file.")
-def create_project(
-        database: str = typer.Argument(..., help="The name of the database to to base the code generation on."),
-        user: str = typer.Argument(..., help="The user account to use to connect to the database."),
-        password: str = typer.Argument(..., help="The user password to use to connect to the database."),
-        driver: str = typer.Argument('mysql', help="The DBMS hosting the database."),
-        host: str = typer.Argument('127.0.0.1', help="The host where the DBMS is running."),
-        port: int = typer.Argument(3306, help="The port on which the DMBS is listening")) -> None:
-    file: Path = utils.get_config_folder().joinpath(f"{database.lower()}.env")
-    if file.exists():
-        typer.echo(f"A project for the database: {database.lower()}, exists.")
-        typer.Exit()
+@app.command('list', help="This command lists the defined projects.")
+def list_projects() -> None:
+    names: List[str] = project_config.get_project_list()
 
-    now: datetime = datetime.now()
-    now_str: str = now.strftime("%d-%m-%Y, %H:%M:%S")
+    if names:
+        for name in names:
+            typer.echo(name)
+        return
 
-    contents: list[str] = [
-        f"# Hi-Henry Configuration File: {now_str}\n",
-        f"HIH_DATABASE={database}\n",
-        f"HIH_USER={user}\n",
-        f"HIH_PASSWORD={password}\n",
-        f"HIH_DRIVER={driver}\n",
-        f"HIH_HOST={host}\n"
-        f"HIH_PORT={port}"
-    ]
-
-    with open(file, 'w') as f:
-        f.writelines(contents)
-
-    log: Logger = getLogger()
-    log.info(f"Project file created for: {database}")
-
-    typer.echo('Project file created')
-
-
-@app.command('delete', help="This command deletes an existing project.")
-def delete_project(
-        database: str = typer.Argument(..., help="The name of the database used to generate code.")) -> None:
-    file: Path = utils.get_config_folder().joinpath(f"{database.lower()}.env")
-    if not file.exists():
-        typer.echo(f"No project file exists for the database: {database.lower()}.")
-        typer.Exit()
-
-    file.unlink()
-
-    log: Logger = getLogger()
-    log.info(f"Project file deleted: {database}")
-
-    typer.echo('DFile deleted successfully')
+    typer.echo('No projects found')
 
 
 @app.command('generate', help=" This command generates the code for the given database")
 def generate_code(
-        database: str = typer.Argument(..., help="The name of the database to use in generate the code."),
+        name: str = typer.Argument(..., help="The name of project to use."),
         folder: str = typer.Argument(None, help="If provided, code will be generated in this folder")) -> None:
-    file: Path = utils.get_config_folder().joinpath(f"{database.lower()}.env")
-    if not file.exists():
-        typer.echo(f"No configuration file exists for the database: {database.lower()}.")
-        typer.Exit()
 
-    if typer.confirm('Are you sure you wish to generate code', default=True):
-        # Ensure the output folder exists
-        output_folder: Path = utils.get_output_folder()
+    project = project_config.get_project(name)
+    output_folder: Path = utils.get_output_folder()
 
-        if folder:
-            output_folder = pathlib.Path(folder)
+    if folder:
+        output_folder = pathlib.Path(folder)
 
-        if not output_folder.exists():
-            output_folder.mkdir(parents=True, exist_ok=True)
+    if not output_folder.exists():
+        output_folder.mkdir(parents=True, exist_ok=True)
 
-        # Get the connection info
-        project: types.IProject = utils.get_config(file)
-
-        # Generate code
-        return generate.generate_code(project, output_folder)
-
-    typer.echo('No code generated')
+    # Generate code
+    generate.generate_code(project, output_folder)
+    typer.echo('Code generated.')
 
 
 @app.command('clear', help="This command deletes the generated code")

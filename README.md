@@ -11,7 +11,7 @@ support other DBMS systems and coding languages through a plugin architecture an
 ## Projects 
 
 The application uses the concept of projects to group the information necessary to access a database or similar data 
-source and generate code.  The fully defined project supplies the following information:
+source and generate code.  The fully defined project contains the following information:
 
 | Key       | Description                                                                  |
 |-----------|------------------------------------------------------------------------------|
@@ -26,10 +26,10 @@ source and generate code.  The fully defined project supplies the following info
 | explorer  | The schema extractor to use in order to obtain the database schema           |
 | generator | The generator to use in order to generate the code                           |
 
-The project configurations are stored in the config/projects.toml file.  The format provides for use of defaults that
-can be overwritten with project specific values.  Default values are stored in a single section titled: defaults, while
-individual project values are stored in subsections within the projects' section with the follow naming convention: 
-projects.{project name}
+The project configurations are stored in the config/projects.toml file.  The format provides for the use of defaults 
+that can be overwritten with project specific values.  Default values are stored in a single section titled: defaults, 
+while individual project values are stored in subsections within the projects' section with the follow naming 
+convention: projects.{project name}
 
 ## Install
 

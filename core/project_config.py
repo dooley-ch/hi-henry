@@ -36,6 +36,7 @@ class ProjectDefinition(pydantic.BaseModel):
     database: str
     user: str
     password: str
+    multi_file:bool
 
 
 def _load_config(file: Union[Path, None] = None) -> Dict[str, List]:

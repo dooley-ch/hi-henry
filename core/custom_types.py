@@ -143,11 +143,6 @@ class IDatabaseConnectionInfo(Protocol):
 
     @property
     @abc.abstractmethod
-    def driver(self) -> str:
-        ...
-
-    @property
-    @abc.abstractmethod
     def password(self) -> str:
         ...
 
@@ -168,7 +163,22 @@ class IProject(IDatabaseConnectionInfo):
     """
     @property
     @abc.abstractmethod
-    def driver(self) -> str:
+    def name(self) -> str:
+        ...
+
+    @property
+    @abc.abstractmethod
+    def explorer(self) -> str:
+        ...
+
+    @property
+    @abc.abstractmethod
+    def generator(self) -> str:
+        ...
+
+    @property
+    @abc.abstractmethod
+    def multi_file(self) -> bool:
         ...
 
 
