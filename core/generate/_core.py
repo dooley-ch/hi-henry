@@ -29,7 +29,7 @@ import typer
 import core.custom_types as types
 import core.system_config as config
 import core.utils as utils
-from ._explorer_factory import create_explorer_plugin
+from ._factory import create_explorer_plugin
 from ._templates import create_code_file_content
 
 

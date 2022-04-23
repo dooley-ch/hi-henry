@@ -28,7 +28,7 @@ from mysql.connector import connect, MySQLConnection, DatabaseError
 from mysql.connector.cursor import MySQLCursor, MySQLCursorDict
 from logging import Logger, getLogger
 import pydantic
-from core.generate import register_plugin
+from core.generate import register_explorer_plugin
 
 
 class _ConnectionInfo(Protocol):
@@ -227,4 +227,4 @@ def initialize() -> None:
     """
     This function registers the plugin with the application
     """
-    register_plugin('mysql', MySqlSchemaExplorer)
+    register_explorer_plugin('mysql', MySqlSchemaExplorer)

@@ -19,10 +19,11 @@ __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
 __all__ = ['IColumn', 'ColumnList', 'ITable', 'TableList', 'IDatabase', 'IDatabaseExplorer', 'IPluginInterface',
-           'IDatabaseConnectionInfo', 'CreatePluginFunction', 'IProject', 'IColumnDefinition', 'IClassDefinition',
-           'DataTypeMap']
+           'IDatabaseConnectionInfo', 'CreateExplorerPluginFunction', 'IProject', 'IColumnDefinition', 'IClassDefinition',
+           'DataTypeMap', 'IGenerator', 'CreateGeneratorPluginFunction']
 
 import abc
+import pathlib
 from typing import Protocol, Union, TypeAlias, Dict, Callable, List, runtime_checkable
 
 
@@ -182,7 +183,7 @@ class IProject(IDatabaseConnectionInfo):
         ...
 
 
-CreatePluginFunction: TypeAlias = Callable[[IDatabaseConnectionInfo], IDatabaseExplorer]
+CreateExplorerPluginFunction: TypeAlias = Callable[[IDatabaseConnectionInfo], IDatabaseExplorer]
 
 
 @runtime_checkable
@@ -207,3 +208,15 @@ class IClassDefinition(Protocol):
 
 
 DataTypeMap = Dict[str, str]
+
+
+class IGenerator:
+    """
+    This class defines the interface for the code gemeratpr
+    """
+    def generate(self, schema:IDatabase, datatype_map: DataTypeMap, output_folder: pathlib.Path,
+            template_folder: pathlib.Path, multi_file: bool) -> bool:
+        ...
+
+
+CreateGeneratorPluginFunction: TypeAlias = Callable[..., IGenerator]

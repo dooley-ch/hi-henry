@@ -15,7 +15,8 @@ __license__ = "MIT"
 __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
-__all__ = ['generate_code', 'register_plugin', 'unregister_plugin']
+__all__ = ['generate_code', 'register_explorer_plugin', 'unregister_explorer_plugin', 'register_generator_plugin',
+           'unregister_generator_plugin']
 
 from ._core import *
-from ._explorer_factory import *
+from ._factory import *
