@@ -36,6 +36,14 @@ enum = "str"
 set = "str"
 json = "str"
 
-[[plugins]]
-driver = "mysql"
+[explorer_plugins]
+
+[explorer_plugins.mysql]
+name = "mysql"
 file = "mysql_schema_explorer"
+
+[generator_plugins]
+
+[generator_plugins.python]
+name = "python"
+file = "python_code_generator"

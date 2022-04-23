@@ -33,7 +33,7 @@ def main():
     fileConfig(config_file)
 
     # Register plugins
-    plugins = config.get_plugins()
+    plugins = config.get_explorer_plugins()
     for plugin in plugins:
         generate.load_plugin(plugin.file)
 

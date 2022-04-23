@@ -1,5 +1,5 @@
 # *******************************************************************************************
-#  File:  _factory.py
+#  File:  _explorer_factory.py
 #
 #  Created: 13-04-2022
 #
@@ -19,7 +19,7 @@ __license__ = "MIT"
 __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
-__all__ = ['register_plugin', 'unregister_plugin', 'create_plugin', 'load_plugin']
+__all__ = ['register_plugin', 'unregister_plugin', 'create_explorer_plugin', 'load_plugin']
 
 import importlib
 from logging import Logger, getLogger
@@ -49,7 +49,7 @@ def unregister_plugin(driver: str) -> None:
     _plugin_creation_funcs.pop(driver, None)
 
 
-def create_plugin(driver: str, conn_info: types.IDatabaseConnectionInfo) -> types.IDatabaseExplorer:
+def create_explorer_plugin(driver: str, conn_info: types.IDatabaseConnectionInfo) -> types.IDatabaseExplorer:
     """
     This function creates a new database explorer instance for a given driver
     """

@@ -29,7 +29,7 @@ import typer
 import core.custom_types as types
 import core.system_config as config
 import core.utils as utils
-from ._factory import create_plugin
+from ._explorer_factory import create_explorer_plugin
 from ._templates import create_code_file_content
 
 
@@ -98,7 +98,7 @@ def generate_code(project: types.IProject, output_folder: pathlib.Path = None) -
     log: Logger = getLogger('progress_logger')
     error_log: Logger = getLogger()
 
-    explorer: types.IDatabaseExplorer = create_plugin(project.explorer, project)
+    explorer: types.IDatabaseExplorer = create_explorer_plugin(project.explorer, project)
     schema: types.IDatabase = explorer.extract()
 
     data_map: types.DataTypeMap = config.get_data_map(project.explorer)
