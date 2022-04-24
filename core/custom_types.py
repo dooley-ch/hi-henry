@@ -214,7 +214,7 @@ class IGenerator:
     """
     This class defines the interface for the code gemeratpr
     """
-    def generate(self, schema:IDatabase, datatype_map: DataTypeMap, output_folder: pathlib.Path,
+    def generate(self, project_name: str, schema:IDatabase, datatype_map: DataTypeMap, output_folder: pathlib.Path,
             template_folder: pathlib.Path, multi_file: bool) -> bool:
         ...
 

@@ -54,7 +54,7 @@ def create_generator_plugin(name: str) -> types.IGenerator:
     """
     This function creates a new generator instance for a given name
     """
-    if name in _plugin_explorer_creation_funcs:
+    if name in _plugin_generator_creation_funcs:
         func = _plugin_generator_creation_funcs[name]
         explorer = func()
 

@@ -22,16 +22,15 @@ __status__ = "Production"
 __all__ = ['app']
 
 import pathlib
-from typing import List
-from datetime import datetime
 from logging import Logger, getLogger
 from pathlib import Path
+from typing import List
+
 import typer
-import core.utils as utils
-import core.custom_types as types
+
 import core.generate as generate
 import core.project_config as project_config
-
+import core.utils as utils
 
 app = typer.Typer(
     help="""This application extracts a database schema and generates a set of Pydantic classes representing 
@@ -65,8 +64,10 @@ def generate_code(
         output_folder.mkdir(parents=True, exist_ok=True)
 
     # Generate code
-    generate.generate_code(project, output_folder)
-    typer.echo('Code generated.')
+    if generate.generate_code(project, output_folder):
+        typer.echo('Code generated.')
+    else:
+        typer.echo('No code generated, see log file for details.')
 
 
 @app.command('clear', help="This command deletes the generated code")

@@ -1,0 +1,78 @@
+# *******************************************************************************************
+#  File:  projects.toml
+#
+#  Created: 22-04-2022
+#
+#  Description: This file defines the logging configuration
+#
+#  Copyright (c) 2022 James Dooley <james@dooley.ch>
+#
+#  History:
+#  22-04-2022: Initial version
+#
+# *******************************************************************************************
+
+version = 1
+disable_existing_loggers = false
+
+[formatters]
+
+[formatters.default_formatter]
+format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+[formatters.console_formatter]
+format = "%(levelname)s - %(message)s"
+
+[formatters.debug_formatter]
+format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s [File: %(filename)s - Line No: %(levelno)s]"
+
+[formatters.file_formatter]
+format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+[loggers]
+
+[loggers.root]
+handlers = ["default_handler", "console_handler", "file_handler", "error_file_handler"]
+level = "NOTSET"
+
+[loggers.progress_logger]
+handlers = ["progress_file_handler"]
+level = "INFO"
+qualname = "progress_logger"
+propagate = true
+
+[handlers]
+
+[handlers.default_handler]
+class = "logging.NullHandler"
+level = "DEBUG"
+formatter = "default_formatter"
+
+[handlers.console_handler]
+class = "logging.StreamHandler"
+level = "ERROR"
+formatter = "console_formatter"
+
+[handlers.file_handler]
+class = "logging.handlers.TimedRotatingFileHandler"
+filename = "place_holder.txt"
+when = "midnight"
+backupCount = 5
+formatter = "file_formatter"
+level = "INFO"
+
+[handlers.progress_file_handler]
+class = "logging.handlers.TimedRotatingFileHandler"
+filename = "place_holder.txt"
+when = "midnight"
+backupCount = 5
+formatter = "file_formatter"
+level = "INFO"
+
+[handlers.error_file_handler]
+class = "logging.handlers.TimedRotatingFileHandler"
+filename = "place_holder.txt"
+when = "midnight"
+backupCount = 5
+formatter = "debug_formatter"
+level = "ERROR"

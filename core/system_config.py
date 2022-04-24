@@ -19,13 +19,13 @@ __license__ = "MIT"
 __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
-__all__ = ['get_explorer_plugins', 'get_generator_plugins', 'PluginInfo']
+__all__ = ['get_explorer_plugins', 'get_generator_plugins', 'PluginInfo', 'configure_logging']
 
 import pydantic
 import tomli
 from pathlib import Path
-from typing import List, Dict, Union
-
+from typing import List, Dict, Union, Optional
+from logging.config import dictConfig
 import core.utils as utils
 
 
@@ -80,3 +80,25 @@ def get_data_map(driver: str) -> Dict[str, str] | None:
     if key in content.keys():
         data_map = content[key]
         return data_map
+
+
+def configure_logging(logging_folder: Optional[Path | None] = None) -> None:
+    """
+    This function configures application logging
+    """
+    if logging_folder is None:
+        logging_folder = utils.get_logs_folder()
+
+    main_file: Path = logging_folder.joinpath('main.log')
+    activity_file: Path = logging_folder.joinpath('activity.log')
+    error_file: Path = logging_folder.joinpath('error.log')
+
+    config_file: Path = utils.get_config_folder().joinpath('logging.toml')
+    with config_file.open('rb') as file:
+        config_data = tomli.load(file)
+
+    config_data['handlers']['file_handler']['filename'] = main_file
+    config_data['handlers']['error_file_handler']['filename'] = error_file
+    config_data['handlers']['progress_file_handler']['filename'] = activity_file
+
+    dictConfig(config_data)

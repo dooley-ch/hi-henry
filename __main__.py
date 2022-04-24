@@ -37,6 +37,10 @@ def main():
     for plugin in plugins:
         generate.load_plugin(plugin.file)
 
+    plugins = config.get_generator_plugins()
+    for plugin in plugins:
+        generate.load_plugin(plugin.file)
+
     # Process commands
     command_line.app()
 

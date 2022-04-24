@@ -149,7 +149,7 @@ class MySqlCodeGenerator:
             content: List[str] = MySqlCodeGenerator._create_code_file_content(output_file_name, classes, template_folder)
         except Exception as e:
             error_log.exception(e)
-            raise
+            return False
 
         # Write file
         output_file: pathlib.Path = output_folder.joinpath(output_file_name)
@@ -158,11 +158,13 @@ class MySqlCodeGenerator:
                 file.writelines(content)
             except Exception as e:
                 error_log.exception(e)
-                raise
+                return False
+
+        return True
 
 
 def initialize() -> None:
     """
     This function registers the plugin with the application
     """
-    register_generator_plugin('mysql', MySqlCodeGenerator)
+    register_generator_plugin('python', MySqlCodeGenerator)

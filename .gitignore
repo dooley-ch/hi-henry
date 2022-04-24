@@ -135,5 +135,4 @@ generated/*
 !generated/*.gitkeep
 logs/*
 !logs/*.gitkeep
-test/config/*.*
-
+test/test_data/*.log
