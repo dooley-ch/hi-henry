@@ -8,60 +8,14 @@ The purpose of "Hi Henry" is to generate code to enable an application to access
 currently only supports the MySQL database system and generates Python code.  But has been designed to be extended to 
 support other DBMS systems and coding languages through a plugin architecture and a data type mapping mechanisim.
 
-## Projects 
-
-The application uses the concept of projects to group the information necessary to access a database or similar data 
-source and generate code.  The fully defined project contains the following information:
-
-| Key       | Description                                                                  |
-|-----------|------------------------------------------------------------------------------|
-| name      | The project name                                                             |
-| template  | The name of the template to use in generate the code                         |
-| files     | Indicates if the generator should generate a file per class or a single file |
-| host      | The host where which the DBMS is running                                     |
-| port      | The port on which the DMBS is listening                                      | 
-| database  | The name of the database to use in generating code                           |
-| user      | The name of the database to use in generating code                           |
-| passport  | The user password to use to connect to the database                          |
-| explorer  | The schema extractor to use in order to obtain the database schema           |
-| generator | The generator to use in order to generate the code                           |
-
-The project configurations are stored in the config/projects.toml file.  The format provides for the use of defaults 
-that can be overwritten with project specific values.  Default values are stored in a single section titled: defaults, 
-while individual project values are stored in subsections within the projects' section with the follow naming 
-convention: projects.{project name}
 
 ## Install
 
 The application as been designed as a runnable folder.  Simply download a copy of the source code to a
 folder and run it using the commands and parameters described below.
 
+
 ## Usage
-
-### create
-
-This command defines a new configuration that can be used to connect to a database and extract its schema.  The 
-command accepts the following parametrs:
-
-| Parameter | Description                                               | Required | Default   |
-|-----------|-----------------------------------------------------------|----------|-----------|
-| database  | The name of the database to use in generating code        | Yes      |           |
-| user      | The name of the database to use in generating code        | Yes      |           | 
-| passport  | The user password to use to connect to the database       | Yes      |           |
-| driver    | The database management system (DBMS) hostig the database | No       | mysql     |
-| host      | The host where which the DBMS is running                  | No       | 127.0.0.1 | 
-| port      | The port on which the DMBS is listening                   | No       | 3306      |
-
-The driver parameter currently only supports one option - mysql, others may be added later.
-
-### delete
-
-This command deletes a configuration, previously created with the creaet command.  The command requires the following 
-parameter:
-
-| Parameter | Description                                               | Required | Default   |
-|-----------|-----------------------------------------------------------|----------|-----------|
-| database  | The name of the database to use in generating code        | Yes      |           |
 
 ### generate
 
@@ -72,7 +26,7 @@ This command generaets the code. The command supports the following parameter:
 | database  | The name of the database to use in generating code   | Yes      |         |
 | folder    | If provided, code will be generated in this folder   | No       |         |
 
-### clear
+### delete
 
 This command deletes the contents of the folder where the generated code was stored.  Optionally the default folder can 
 be overwritten.
@@ -81,12 +35,18 @@ be overwritten.
 |-----------|------------------------------------------------------|----------|---------|
 | folder    | If provided, code will be generated in this folder   | No       |         |
 
+### list
+
+This command lists the projects define in the application.  It serves as a check that can be used to make sure projects
+have been correctly defined.
+
+
 ## Design
 
 ### Concept
 
-This utility can be used to generate a set of Data Trasfer Objects (DTO) based on a database schema.  The DTOs are 
-based on the [Pydanic package](https://pydantic-docs.helpmanual.io).
+This application, as delivered, can be used to generate a set of Data Trasfer Objects (DTO) based on a database schema.  
+The DTOs are based on the [Pydanic package](https://pydantic-docs.helpmanual.io).
 
 The tool supports a particular database design pattern:
 
@@ -129,37 +89,121 @@ When a record is changed the following must occur:
 - The updated_at field must be set to the current date and time
 - If an audit is required, then an entry must be created in the corresponding xxx table
 
-### Configuration
+### Projects 
 
-All the configuration files are stored in the config folder.
+The application uses the concept of projects to group the information necessary to access a database or similar data 
+source and generate code.  The fully defined project contains the following information:
 
-#### Logging
+| Key       | Description                                                                  |
+|-----------|------------------------------------------------------------------------------|
+| name      | The project name                                                             |
+| template  | The name of the template to use in generate the code                         |
+| files     | Indicates if the generator should generate a file per class or a single file |
+| host      | The host where which the DBMS is running                                     |
+| port      | The port on which the DMBS is listening                                      | 
+| database  | The name of the database to use in generating code                           |
+| user      | The name of the database to use in generating code                           |
+| passport  | The user password to use to connect to the database                          |
+| explorer  | The schema extractor to use in order to obtain the database schema           |
+| generator | The generator to use in order to generate the code                           |
 
-The application logging is configured via the logging.cfg file.  Logging is configured to write to three files, 
-as follows:
+The project configurations are stored in the config/projects.toml file.  The format provides for the use of defaults 
+that can be overwritten with project specific values.  Default values are stored in a single section titled: defaults, 
+while individual project values are stored in subsections within the projects' section with the follow naming 
+convention: projects.{project name}
 
-| File         | Description                                                                          |
-|--------------|--------------------------------------------------------------------------------------|
-| main.log     | All log messages are written to this file                                            |
-| error.log    | This file is used to log all error messages and above, to make it easy to find them. |
-| activity.log | This file is used to detail the steps in the process of generating code              |
+### Logging
 
-The root logger is configured to:
-- Log all messages to the main.log file
-- Log error messages to the error.log
-- Log error messages to the console
+The application uses three log file:
 
-A second logger (progress_logger) is configured to:
-- Log Info and above messages to the activity.log file to show how the application goes through the process of generating code.
-- Propigate the messages to teh root logger
+| File Name    | Description                                                                                                                   |
+|--------------|-------------------------------------------------------------------------------------------------------------------------------|
+| main.log     | All activity is logged to this file                                                                                           |
+| activity.log | In addition the out come of all steps in the process shoudl be logged here. This is just a handy way of filtering information |
+| error.log    | All errors are logged here in addition to the main file.  This is just a handy way of filtering information                   |
 
 
-#### Plugin
+### Plugins
 
-The information for configurng the plugins is stored in the system.toml file and consists of two parts:
+The application has been designed to be extended in terms of supporting other DBMS systems and other programming 
+languages.  This is done by implementing both processes as a plugin model.
 
-- The plugin entry which defines the plugin 
-- The data map entry which maps the database types to the Python and Pydantic data types
+The application discovers the plugins by reading the system.toml file.  For this to happen there needs to be two entries
+in the system.toml file:
+
+- A plugins entry that tells the application the name database driver being supported and the name of the module containing the plugin.
+- A data map entry that maps the DBMS native data types to their Python/Pydantic types.
+
+#### Explorer Plugins
+
+These plugins need to deliver the schema using the interfaces described below and the module needs to support two 
+additional interfaces:
+
+```mermaid
+    classDiagram
+    
+    class IPluginInterface {
+        <<interface>>
+        +initialize()
+    }
+    
+    class IDatabaseExplorer {
+        <<interface>>
+        +extract()
+    }
+```
+
+The IPluginInterface is used to register the plugin with the application.  The module is loaded by the application based
+on the definition provided by the system.toml file and the initialize() is called.  Within the method the necessary 
+methods are called to register the plugin.
+
+The plugin itself must implement the IDatabaseExplorer interface.  This interface is responsible for delivering the 
+schema to the application.
+
+When an instance of the explorer is created it is passed an instance of a class that supports the following protocol:
+
+```mermaid
+    classDiagram
+    
+    class IConnectionInfo {
+        <<interface>>
+        +str database
+        +str user
+        +str password
+        +str host
+        +int port
+    }
+```
+
+The MySQL plugin located in the plugin folder can be used as implementation reference model.
+
+#### Generator Plugins
+
+These plugins need to generate the code and write it to the file or files, using the interfaces described below 
+
+```mermaid
+    classDiagram
+    class IPluginInterface {
+        <<interface>>
+        +initialize()
+    }
+    
+    class IGenerator {
+        <<interface>>
+        +generate()
+    }
+```
+
+The generate method is passed the following parameters:
+
+| Parameter       | Type         | Description                                                                     |
+|-----------------|--------------|---------------------------------------------------------------------------------|
+| project_name    | str          | The project name                                                                |
+| schema          | IDatabase    | The deals of the database schema                                                |
+| datatype_map    | DataTypeMap  | A map used to map the native data types to the python types                     |
+| output_folder   | pathlib.Path | The folder where the generate code is  stored                                   |
+| template_folder | pathlib.Path | The folder where the templates used by the generator are located                |
+| multi_file      | bool         | Flag to indicate if the code should be wirtten to one file or to multiple files |
 
 
 ### Schema Model
@@ -200,41 +244,6 @@ The schema model is represented by a series of associated interfaces, which must
     IDatabase ..> ITable
     ITable ..> IColumn
 ```
-
-### Extendability
-
-The application has been designed to be extended in terms of supporting other DBMS systems.  This is done by 
-implementing the extraction process as a plugin model.  The plugin needs to deliver the schema using the interfaces 
-described above and the module needs to support two additional interfaces:
-
-```mermaid
-    classDiagram
-    
-    class IPluginInterface{
-        <<interface>>
-        +initialize()
-    }
-
-    class IDatabaseExplorer{
-        <<interface>>
-        +__init__(connection_info)
-        +extract()
-    }
-```
-The IPluginInterface is used to register the plugin with the application.  The module is loaded by the application based
-on the definition provided by the system.toml file and the initialize() is called.  Within the method the necessary 
-methods are called to register the plugin.
-
-The plugin itself must implement the IDatabaseExplorer interface.  This interface is responsible for delivering the 
-schema to the application.
-
-The application discovers the plugins by reading the system.toml file.  For this to happen there needs to be two entries
-in the system.toml file:
-
-- A plugins entry that tells the application the name database driver being supported and the name of the module containing the plugin.
-- A data map entry that maps the DBMS native data types to their Python/Pydantic types.
-
-The MySQL plugin located in the plugin folder can be used as implementation reference model.
 
 ### Code Generation
 

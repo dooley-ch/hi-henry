@@ -20,17 +20,14 @@ __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
 
-from logging.config import fileConfig
+import core.command_line as command_line
 import core.generate as generate
 import core.system_config as config
-import core.utils as utils
-import core.command_line as command_line
 
 
 def main():
     # Set up logging
-    config_file = utils.get_config_folder().joinpath('logging.cfg')
-    fileConfig(config_file)
+    config.configure_logging()
 
     # Register plugins
     plugins = config.get_explorer_plugins()

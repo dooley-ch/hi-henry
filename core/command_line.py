@@ -70,7 +70,7 @@ def generate_code(
         typer.echo('No code generated, see log file for details.')
 
 
-@app.command('clear', help="This command deletes the generated code")
+@app.command('delete', help="This command deletes the generated code")
 def delete_code(folder: str = typer.Argument(None, help="If provided, code will be generated in this folder")) -> None:
     output_folder: Path = utils.get_output_folder()
     if folder:

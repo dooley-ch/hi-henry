@@ -48,11 +48,6 @@ class _ConnectionInfo(Protocol):
 
     @property
     @abstractmethod
-    def driver(self) -> str:
-        ...
-
-    @property
-    @abstractmethod
     def password(self) -> str:
         ...
 
