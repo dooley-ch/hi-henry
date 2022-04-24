@@ -1,0 +1,92 @@
+# MySql Schema Scripts
+
+## Databases
+
+The following scripts can be used to get the list of databases:
+
+```mysql
+SHOW DATABASES;
+```
+```mysql
+SELECT SCHEMA_NAME, DEFAULT_CHARACTER_SET_NAME
+FROM information_schema.schemata;
+```
+
+## Tables
+
+```mysql
+SHOW TABLES;
+```
+
+```mysql
+SELECT TABLE_NAME, TABLE_COMMENT, TABLE_ROWS FROM information_schema.tables
+    WHERE (TABLE_SCHEMA = '<DATABASE NAME>') AND (TABLE_TYPE = 'BASE TABLE') ORDER BY TABLE_NAME;
+```
+
+## Table Columns
+
+```mysql
+DESCRIBE `<table Name>`;
+```
+
+```mysql
+SELECT COLUMN_NAME, ORDINAL_POSITION, COLUMN_DEFAULT, IS_NULLABLE, DATA_TYPE,
+       CHARACTER_MAXIMUM_LENGTH, COLUMN_KEY, EXTRA
+  FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = '<DATABASE NAME>' AND TABLE_NAME = `<table Name>`;
+```
+
+## Table Primary Key
+
+```mysql
+SHOW KEYS FROM `<table Name>` WHERE Key_name = 'PRIMARY';
+```
+
+```mysql
+SELECT COLUMN_NAME
+FROM INFORMATION_SCHEMA.key_column_usage
+WHERE (TABLE_SCHEMA = '<DATABASE NAME>') AND (CONSTRAINT_NAME = 'PRIMARY') AND (TABLE_NAME = `<table Name>`);
+```
+
+## Table Foreign Keys
+
+```mysql
+SELECT 
+    CONSTRAINT_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME
+FROM
+  INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+WHERE
+  REFERENCED_TABLE_SCHEMA = 'mistral' AND
+  REFERENCED_TABLE_NAME = 'album';
+```
+
+## Table Indexes
+
+```mysql
+SHOW INDEX FROM`<table Name>`;
+```
+
+```mysql
+SELECT DISTINCT INDEX_NAME, INDEX_COMMENT, IF(NON_UNIQUE = 0, TRUE, FALSE) AS IS_UNIQUE
+    FROM INFORMATION_SCHEMA.STATISTICS
+    WHERE (TABLE_SCHEMA = 'mistral') AND (TABLE_NAME = 'album') AND (INDEX_NAME != 'PRIMARY');
+```
+
+## Views
+
+```mysql
+SELECT TABLE_NAME, TABLE_COMMENT FROM information_schema.tables
+    WHERE (TABLE_SCHEMA = '<DATABASE NAME>') AND (TABLE_TYPE = 'VIEW') ORDER BY TABLE_NAME;
+```
+
+## View Columns
+
+```mysql
+DESCRIBE `<View Name>`;
+```
+
+```mysql
+SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH
+  FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = '<DATABASE NAME>' AND TABLE_NAME = `<View Name>`;
+```

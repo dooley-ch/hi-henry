@@ -1,84 +1,57 @@
 -- *******************************************************************************************
---  File:  mysql_mistral.sql
---
---  Description: Creates the test MySQL database
---
---  Created: 12-04-2022
---
---  Copyright (c) 2022 James Dooley <james@dooley.ch>
---
---  History:
---  12-04-2022: Initial version
---
+-- **  File:  mysql-preferred.sql
+-- **  Description: Creates the preferred database
+-- **  Created: 10-03-2020
+-- **
+-- **  History:
+-- **  10-08-2020: Initial version
+-- **  24-04-2022: Added drop script
+-- **
 -- *******************************************************************************************
 
--- Drop current tables
+SET FOREIGN_KEY_CHECKS = 0;
+
 DROP TABLE IF EXISTS activity_log;
-
-DROP TABLE IF EXISTS invoice_item;
-
-DROP TABLE IF EXISTS invoice;
-
-DROP TABLE IF EXISTS customer;
-
-DROP TABLE IF EXISTS employee;
-
-DROP TABLE IF EXISTS log;
-
-DROP TABLE IF EXISTS playlist_track;
-
-DROP TABLE IF EXISTS playlist;
-
-DROP TABLE IF EXISTS setup;
-
-DROP TABLE IF EXISTS track;
-
 DROP TABLE IF EXISTS album;
-
-DROP TABLE IF EXISTS artist;
-
-DROP TABLE IF EXISTS genre;
-
-DROP TABLE IF EXISTS media_type;
-
-DROP TABLE IF EXISTS user_setup;
-
+DROP TABLE IF EXISTS xxx_album;
 DROP TABLE IF EXISTS application;
-
+DROP TABLE IF EXISTS xxx_application;
+DROP TABLE IF EXISTS artist;
+DROP TABLE IF EXISTS xxx_artist;
+DROP TABLE IF EXISTS customer;
+DROP TABLE IF EXISTS xxx_customer;
+DROP TABLE IF EXISTS employee;
+DROP TABLE IF EXISTS xxx_employee;
+DROP TABLE IF EXISTS genre;
+DROP TABLE IF EXISTS xxx_genre;
+DROP TABLE IF EXISTS invoice;
+DROP TABLE IF EXISTS xxx_invoice;
+DROP TABLE IF EXISTS invoice_item;
+DROP TABLE IF EXISTS xxx_invoice_item;
+DROP TABLE IF EXISTS log;
+DROP TABLE IF EXISTS media_type;
+DROP TABLE IF EXISTS xxx_media_type;
+DROP TABLE IF EXISTS playlist;
+DROP TABLE IF EXISTS xxx_playlist;
+DROP TABLE IF EXISTS playlist_track;
+DROP TABLE IF EXISTS xxx_playlist_track;
+DROP TABLE IF EXISTS setup;
+DROP TABLE IF EXISTS track;
+DROP TABLE IF EXISTS xxx_track;
+DROP TABLE IF EXISTS user_setup;
 DROP TABLE IF EXISTS version;
 
-DROP TABLE IF EXISTS xxx_album;
+DROP VIEW IF EXISTS albums;
+DROP VIEW IF EXISTS invoices;
 
-DROP TABLE IF EXISTS xxx_application;
-
-DROP TABLE IF EXISTS xxx_artist;
-
-DROP TABLE IF EXISTS xxx_customer;
-
-DROP TABLE IF EXISTS xxx_employee;
-
-DROP TABLE IF EXISTS xxx_genre;
-
-DROP TABLE IF EXISTS xxx_invoice;
-
-DROP TABLE IF EXISTS xxx_invoice_item;
-
-DROP TABLE IF EXISTS xxx_media_type;
-
-DROP TABLE IF EXISTS xxx_playlist;
-
-DROP TABLE IF EXISTS xxx_playlist_track;
-
-DROP TABLE IF EXISTS xxx_track;
-
--- Create new tables
+SET FOREIGN_KEY_CHECKS = 1;
 
 CREATE TABLE application (
 	`ID`                 int  NOT NULL  AUTO_INCREMENT  PRIMARY KEY,
 	`key`                char(3)  NOT NULL    ,
 	name                 varchar(100)  NOT NULL    ,
 	comments             text      ,
-	lock_version         tinyint  NOT NULL DEFAULT 1   ,
+	version              tinyint  NOT NULL DEFAULT 1   ,
 	created_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	updated_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	CONSTRAINT uk_application UNIQUE ( `key` )
@@ -92,7 +65,7 @@ CREATE TABLE artist (
 	`ID`                 int  NOT NULL  AUTO_INCREMENT  PRIMARY KEY,
 	name                 varchar(100)  NOT NULL    ,
 	name_lower           varchar(100)  NOT NULL    ,
-	lock_version         tinyint  NOT NULL DEFAULT 1   ,
+	version              tinyint  NOT NULL DEFAULT 1   ,
 	created_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	updated_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	CONSTRAINT `Uk_artist_name` UNIQUE ( name_lower )
@@ -114,7 +87,7 @@ CREATE TABLE employee (
 	fax                  varchar(25)      ,
 	email                varchar(50)  NOT NULL    ,
 	manager_id           int      ,
-	lock_version         tinyint  NOT NULL DEFAULT 1   ,
+	version              tinyint  NOT NULL DEFAULT 1   ,
 	created_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	updated_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	CONSTRAINT `Idx_employee_email` UNIQUE ( email ) ,
@@ -127,7 +100,7 @@ CREATE TABLE genre (
 	`ID`                 int  NOT NULL  AUTO_INCREMENT  PRIMARY KEY,
 	name                 varchar(30)  NOT NULL    ,
 	name_lower           varchar(30)  NOT NULL    ,
-	lock_version         tinyint  NOT NULL DEFAULT 1   ,
+	version              tinyint  NOT NULL DEFAULT 1   ,
 	created_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	updated_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	CONSTRAINT `Uk_genre_name` UNIQUE ( name_lower )
@@ -151,7 +124,7 @@ CREATE TABLE media_type (
 	`ID`                 int  NOT NULL  AUTO_INCREMENT  PRIMARY KEY,
 	name                 varchar(40)  NOT NULL    ,
 	name_lower           varchar(40)  NOT NULL    ,
-	lock_version         tinyint  NOT NULL DEFAULT 1   ,
+	version              tinyint  NOT NULL DEFAULT 1   ,
 	created_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	updated_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	CONSTRAINT `Uk_media_type_name` UNIQUE ( name_lower )
@@ -161,7 +134,7 @@ CREATE TABLE playlist (
 	`ID`                 int  NOT NULL  AUTO_INCREMENT  PRIMARY KEY,
 	name                 varchar(40)  NOT NULL    ,
 	name_lower           varchar(40)  NOT NULL    ,
-	lock_version         tinyint  NOT NULL DEFAULT 1   ,
+	version              tinyint  NOT NULL DEFAULT 1   ,
 	created_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	updated_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	CONSTRAINT `Uk_playlist_name` UNIQUE ( name_lower )
@@ -173,7 +146,7 @@ CREATE TABLE setup (
 	value                varchar(300)  NOT NULL    ,
 	data_type            varchar(20)  NOT NULL    ,
 	app_id               int  NOT NULL    ,
-	lock_version         tinyint  NOT NULL DEFAULT 1   ,
+	version              tinyint  NOT NULL DEFAULT 1   ,
 	created_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	updated_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	CONSTRAINT fk_setup_application FOREIGN KEY ( app_id ) REFERENCES application( `ID` ) ON DELETE CASCADE ON UPDATE CASCADE
@@ -186,13 +159,13 @@ CREATE TABLE user_setup (
 	data_type            varchar(20)  NOT NULL    ,
 	usr                  varchar(30)  NOT NULL    ,
 	app_id               int  NOT NULL    ,
-	lock_version         tinyint  NOT NULL DEFAULT 1   ,
+	version              tinyint  NOT NULL DEFAULT 1   ,
 	created_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	updated_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	CONSTRAINT fk_setup_application_0 FOREIGN KEY ( app_id ) REFERENCES application( `ID` ) ON DELETE CASCADE ON UPDATE CASCADE
  );
 
-CREATE TABLE version_info (
+CREATE TABLE version (
 	`ID`                 int  NOT NULL  AUTO_INCREMENT  PRIMARY KEY,
 	major                tinyint  NOT NULL DEFAULT 1   ,
 	minor                smallint  NOT NULL DEFAULT 0   ,
@@ -203,14 +176,14 @@ CREATE TABLE version_info (
 	comments             text
  );
 
-ALTER TABLE version_info ADD CONSTRAINT `Cns_version_status` CHECK ( status in ('STARTED', 'RUNNING', 'ENDED', 'FAILED') );
+ALTER TABLE version ADD CONSTRAINT `Cns_version_status` CHECK ( status in ('STARTED', 'RUNNING', 'ENDED', 'FAILED') );
 
 CREATE TABLE xxx_album (
 	`ID`                 bigint  NOT NULL  AUTO_INCREMENT  PRIMARY KEY,
 	changed_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	action               char(1)  NOT NULL    ,
 	record_id            int  NOT NULL    ,
-	lock_version_id      tinyint  NOT NULL    ,
+	version_id           tinyint  NOT NULL    ,
 	usr                  varchar(30)      ,
 	app                  int      ,
 	title                varchar(120)      ,
@@ -223,7 +196,7 @@ CREATE TABLE xxx_application (
 	changed_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	action               char(1)  NOT NULL    ,
 	record_id            int  NOT NULL    ,
-	lock_version_id      tinyint  NOT NULL    ,
+	version_id           tinyint  NOT NULL    ,
 	usr                  varchar(30)      ,
 	app                  int      ,
 	`key`                char(3)      ,
@@ -236,7 +209,7 @@ CREATE TABLE xxx_artist (
 	changed_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	action               char(1)  NOT NULL    ,
 	record_id            int  NOT NULL    ,
-	lock_version_id      tinyint  NOT NULL    ,
+	version_id           tinyint  NOT NULL    ,
 	usr                  varchar(30)      ,
 	app                  int      ,
 	name                 varchar(100)      ,
@@ -248,7 +221,7 @@ CREATE TABLE xxx_customer (
 	changed_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	action               char(1)  NOT NULL    ,
 	record_id            int  NOT NULL    ,
-	lock_version_id      tinyint  NOT NULL    ,
+	version_id           tinyint  NOT NULL    ,
 	usr                  varchar(30)      ,
 	app                  int      ,
 	first_name           varchar(30)      ,
@@ -270,7 +243,7 @@ CREATE TABLE xxx_employee (
 	changed_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	action               char(1)  NOT NULL    ,
 	record_id            int  NOT NULL    ,
-	lock_version_id      tinyint  NOT NULL    ,
+	version_id           tinyint  NOT NULL    ,
 	usr                  varchar(30)      ,
 	app                  int      ,
 	title                varchar(25)      ,
@@ -292,7 +265,7 @@ CREATE TABLE xxx_genre (
 	changed_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	action               char(1)  NOT NULL    ,
 	record_id            int  NOT NULL    ,
-	lock_version_id      tinyint  NOT NULL    ,
+	version_id           tinyint  NOT NULL    ,
 	usr                  varchar(30)      ,
 	app                  int      ,
 	name                 varchar(30)      ,
@@ -304,7 +277,7 @@ CREATE TABLE xxx_invoice (
 	changed_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	action               char(1)  NOT NULL    ,
 	record_id            int  NOT NULL    ,
-	lock_version_id      tinyint  NOT NULL    ,
+	version_id           tinyint  NOT NULL    ,
 	usr                  varchar(30)      ,
 	app                  int      ,
 	invoice_date         date      ,
@@ -322,7 +295,7 @@ CREATE TABLE xxx_invoice_item (
 	changed_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	action               char(1)  NOT NULL    ,
 	record_id            int  NOT NULL    ,
-	lock_version_id      tinyint  NOT NULL    ,
+	version_id           tinyint  NOT NULL    ,
 	usr                  varchar(30)      ,
 	app                  int      ,
 	invoice_id           int      ,
@@ -336,7 +309,7 @@ CREATE TABLE xxx_media_type (
 	changed_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	action               char(1)  NOT NULL    ,
 	record_id            int  NOT NULL    ,
-	lock_version_id      tinyint  NOT NULL    ,
+	version_id           tinyint  NOT NULL    ,
 	usr                  varchar(30)      ,
 	app                  int      ,
 	name                 varchar(40)      ,
@@ -348,7 +321,7 @@ CREATE TABLE xxx_playlist (
 	changed_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	action               char(1)  NOT NULL    ,
 	record_id            int  NOT NULL    ,
-	lock_version_id      tinyint  NOT NULL    ,
+	version_id           tinyint  NOT NULL    ,
 	usr                  varchar(30)      ,
 	app                  int      ,
 	name                 varchar(40)      ,
@@ -360,7 +333,7 @@ CREATE TABLE xxx_playlist_track (
 	changed_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	action               char(1)  NOT NULL    ,
 	record_id            int  NOT NULL    ,
-	lock_version_id      tinyint  NOT NULL    ,
+	version_id           tinyint  NOT NULL    ,
 	usr                  varchar(30)      ,
 	app                  int      ,
 	playlist_id          int      ,
@@ -372,7 +345,7 @@ CREATE TABLE xxx_track (
 	changed_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	action               char(1)  NOT NULL    ,
 	record_id            int  NOT NULL    ,
-	lock_version_id      tinyint  NOT NULL    ,
+	version_id           tinyint  NOT NULL    ,
 	usr                  varchar(30)      ,
 	app                  int      ,
 	name                 varchar(150)      ,
@@ -397,7 +370,7 @@ CREATE TABLE album (
 	title                varchar(120)  NOT NULL    ,
 	title_lower          varchar(120)  NOT NULL    ,
 	artist_id            int  NOT NULL    ,
-	lock_version_id      tinyint  NOT NULL DEFAULT 1   ,
+	version              tinyint  NOT NULL DEFAULT 1   ,
 	created_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	updated_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	CONSTRAINT `Uk_album_title` UNIQUE ( title_lower ) ,
@@ -420,7 +393,7 @@ CREATE TABLE customer (
 	fax                  varchar(25)      ,
 	email                varchar(50)  NOT NULL    ,
 	support_rep_id       int      ,
-	lock_version_id      tinyint  NOT NULL DEFAULT 1   ,
+	version              tinyint  NOT NULL DEFAULT 1   ,
 	created_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	updated_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	CONSTRAINT `Uk_customer_email` UNIQUE ( email ) ,
@@ -439,7 +412,7 @@ CREATE TABLE invoice (
 	post_code            varchar(12)      ,
 	total                decimal  NOT NULL    ,
 	customer_id          int  NOT NULL    ,
-	lock_version_id      tinyint  NOT NULL DEFAULT 1   ,
+	version              tinyint  NOT NULL DEFAULT 1   ,
 	created_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	updated_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	CONSTRAINT `Fk_invoice_customer` FOREIGN KEY ( customer_id ) REFERENCES customer( `ID` ) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -457,7 +430,7 @@ CREATE TABLE track (
 	album_id             int  NOT NULL    ,
 	media_type_id        int  NOT NULL    ,
 	genre_id             int  NOT NULL    ,
-	lock_version_id      tinyint  NOT NULL DEFAULT 1   ,
+	version              tinyint  NOT NULL DEFAULT 1   ,
 	created_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	updated_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	CONSTRAINT `Fk_track_album` FOREIGN KEY ( album_id ) REFERENCES album( `ID` ) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -477,7 +450,7 @@ CREATE TABLE invoice_item (
 	unit_price           decimal  NOT NULL    ,
 	track_id             int  NOT NULL    ,
 	invoice_id           int  NOT NULL    ,
-	lock_version         tinyint  NOT NULL DEFAULT 1   ,
+	version              tinyint  NOT NULL DEFAULT 1   ,
 	created_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	updated_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	CONSTRAINT `Fk_invoice_item_track` FOREIGN KEY ( track_id ) REFERENCES track( `ID` ) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -492,7 +465,7 @@ CREATE TABLE playlist_track (
 	`ID`                 int  NOT NULL  AUTO_INCREMENT  PRIMARY KEY,
 	playlist_id          int  NOT NULL    ,
 	track_id             int  NOT NULL    ,
-	lock_version         tinyint  NOT NULL DEFAULT 1   ,
+	version              tinyint  NOT NULL DEFAULT 1   ,
 	created_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	updated_at           timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP   ,
 	CONSTRAINT `Uk_playlist_track_playlist_id_track_id` UNIQUE ( playlist_id, track_id ) ,
@@ -503,3 +476,12 @@ CREATE TABLE playlist_track (
 CREATE INDEX `Idx_playlist_track_playlist_id` ON playlist_track ( playlist_id );
 
 CREATE INDEX `Idx_playlist_track_track_id` ON playlist_track ( track_id );
+
+CREATE VIEW albums AS
+    SELECT a.id, a.title, a.title_lower, a.artist_id, ar.name
+        FROM album AS a JOIN artist AS ar on a.artist_id = ar.ID;
+
+CREATE VIEW invoices AS
+    SELECT i.id, i.invoice_date, i.customer_id, CONCAT(c.last_name, ' ', c.first_name) AS name,
+           i.address, i.city, i.state, i.country, i.post_code, i.total
+        FROM invoice AS i JOIN customer c on c.ID = i.customer_id;
