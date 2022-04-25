@@ -95,6 +95,7 @@ CREATE TABLE employee (
  );
 
 CREATE INDEX `Idx_employee_manager_id` ON employee ( manager_id );
+CREATE INDEX `Idx_employee_country_manager` ON employee (country, manager_id);
 
 CREATE TABLE genre (
 	`ID`                 int  NOT NULL  AUTO_INCREMENT  PRIMARY KEY,

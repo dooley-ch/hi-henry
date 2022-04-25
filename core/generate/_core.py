@@ -32,8 +32,8 @@ def generate_code(project: types.IProject, output_folder: pathlib.Path = None) -
     """
     This function generates the code for a project and writes it to the output folder
     """
-    explorer: types.IDatabaseExplorer = create_explorer_plugin(project.explorer, project)
-    schema: types.IDatabase = explorer.extract()
+    explorer: types.IDatabaseExplorer = create_explorer_plugin(project.explorer)
+    schema: types.IDatabase = explorer.extract(project)
 
     data_map: types.DataTypeMap = config.get_data_map(project.explorer)
     data_map.setdefault('default', 'str')

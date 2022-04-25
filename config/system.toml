@@ -40,7 +40,7 @@ json = "str"
 
 [explorer_plugins.mysql]
 name = "mysql"
-file = "mysql_schema_explorer"
+file = "mysql_explorer"
 
 [generator_plugins]
 

@@ -1,0 +1,21 @@
+# *******************************************************************************************
+#  File:  __init__.py
+#
+#  Created: 12-04-2022
+#
+#  Copyright (c) 2022 James Dooley <james@dooley.ch>
+#
+#  History:
+#  12-04-2022: Initial version
+#
+# *******************************************************************************************
+
+"""
+This package contains the plugins used to extract the database schema from a DBMS
+"""
+
+__author__ = "James Dooley"
+__license__ = "MIT"
+__version__ = "1.0.0"
+__maintainer__ = "James Dooley"
+__status__ = "Production"

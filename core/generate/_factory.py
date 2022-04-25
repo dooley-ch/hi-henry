@@ -80,13 +80,13 @@ def unregister_explorer_plugin(name: str) -> None:
     _log.debug(f"Plugin unregistered for explorer: {name}")
 
 
-def create_explorer_plugin(name: str, conn_info: types.IDatabaseConnectionInfo) -> types.IDatabaseExplorer:
+def create_explorer_plugin(name: str) -> types.IDatabaseExplorer:
     """
     This function creates a new database explorer instance for a given name
     """
     if name in _plugin_explorer_creation_funcs:
         func = _plugin_explorer_creation_funcs[name]
-        explorer = func(conn_info)
+        explorer = func()
 
         _log.debug(f"Explorer created for: {name}")
         return explorer

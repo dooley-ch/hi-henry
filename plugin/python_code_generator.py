@@ -75,10 +75,10 @@ class MySqlCodeGenerator:
         class_def = _ClassDefinition(name=_build_class_name(table.name))
 
         col: types.IColumn
-        for col in table.columns:
+        for _, col in table.columns.items():
             class_def.columns.append(_ColumnDefinition(name=col.name,
                                                        definition=MySqlCodeGenerator._get_data_type_definition(
-                                                           col.name, col.type, col.length, data_map)))
+                                                           col.name, col.data_type, col.length, data_map)))
             log.debug(f"Added column definition for table: {table.name} -> {col.name}")
 
         return class_def
@@ -133,12 +133,11 @@ class MySqlCodeGenerator:
         # Map schema to template classes
         classes: List[types.IClassDefinition] = list()
         try:
-            with typer.progressbar(schema.tables) as work:
-                for table in work:
-                    class_def = self._build_class_definition(table, datatype_map)
+             for _, table in schema.tables.items():
+                class_def = self._build_class_definition(table, datatype_map)
 
-                    log.info(f"Class definition generated for table: {table.name}")
-                    classes.append(class_def)
+                log.info(f"Class definition generated for table: {table.name}")
+                classes.append(class_def)
         except Exception as e:
             error_log.exception(e)
             raise

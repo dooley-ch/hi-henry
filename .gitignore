@@ -133,6 +133,7 @@ dmypy.json
 config/*.env
 generated/*
 !generated/*.gitkeep
+!generated/__init__.py
 logs/*
 !logs/*.gitkeep
 test/test_data/*.log

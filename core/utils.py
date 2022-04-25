@@ -49,7 +49,7 @@ class _ConfigFile(pydantic.BaseSettings):
         env_prefix = 'hih_'
 
 
-def get_config(file: pathlib.Path) -> types.IDatabaseConnectionInfo:
+def get_config(file: pathlib.Path) -> types.IDbConnInfo:
     """
     This method loads the configuration information from the given file and returns an
     object consistent with the _ConnectionInfo protocol
