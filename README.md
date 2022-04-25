@@ -213,12 +213,58 @@ The schema model is represented by a series of associated interfaces, which must
 ```mermaid
     classDiagram
     
+    class IViewColumn{
+        <<interface>>
+        str+ name
+        str+ data_type
+        int+ order
+        int+ length
+    }
+    
+    class IColumn{
+        <<interface>>
+        +str default
+        +bool is_nullable
+        +bool is_key
+        +bool is_unqiue
+        +bool is_auto
+        +bool is_primary
+    }   
+    
+    IViewColumn <|-- IColumn
+    
+    class IIndex{
+        <<interface>>
+        +str name
+        +str comment
+        List~str~ colunns
+    }
+    
+    class IForeignKey{
+        <<interface>>
+        +str name
+        +str column_name
+        +str foreign_table_name
+        +str foreign_column_name
+    }
+    
     class ITable{
         <<interface>>
         +str name
+        +str comment
+        +int rows
+        +List~str~ primary_key
         List~IColumn~ columns
         List~IIndex~ indexes
+        List~IIndex~ unique_keys
         List~IForeignKey~ foreign_keys 
+    }
+          
+    class IView{
+        <<interface>>
+        +str name
+        +str comment
+        List~IColumn~ columns
     }
             
     class IDatabase{
@@ -228,21 +274,13 @@ The schema model is represented by a series of associated interfaces, which must
         List~IView~ views
         List~IProcedure~ procedures
     }   
-    
-    class IColumn{
-        <<interface>>
-        +int order
-        +str name
-        +str type
-        +int length
-        +str default
-        +bool is_nullable
-        +bool is_key
-        +bool is_unqiue
-    }   
-            
+                
     IDatabase ..> ITable
     ITable ..> IColumn
+    ITable ..> IIndex
+    ITable ..> IForeignKey
+    IView ..> IViewColumn
+    ITable ..> IView
 ```
 
 ### Code Generation
@@ -251,12 +289,14 @@ The interaction between the main application modules is broadly as follows:
 
 ```mermaid
     sequenceDiagram
-        Main->>+Generate: Generate code (generate_code)
-        Generate->>+Utils: Get project file (get_config)
-        Utils-->>-Generate: Project configuration
-        Generate->>+Plugin: Get schema (extract)
-        Plugin-->>-Generate: Schema (IDatabase)
-        Generate->>+Templates: Generate code (create_code_file_content)
-        Templates-->>-Generate: File content
-        Generate-->>-Main: Write file      
+        main->>+generate: generate_code()
+        generate->>+explorer plugin: extract(IDbConnInfo)
+        explorer plugin->>+generate: IDatabase [Extracted Schema]
+        genrate->>+system_config: get_data_map(name)
+        system_config-->>generate: DataTypeMap [Map for given generator]
+        generate->>+generate plugin: generate(name, schema, data_map, output_folder, template_folder, multi_file_flag)
+        generate plugin->>+Template Engine: create_code_file_content
+        Template Engine-->>-generate plugin: file contents: List[str]
+        generate plugin-->>-generate: file written
+        generate-->>-main: done
 ```
