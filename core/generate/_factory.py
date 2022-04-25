@@ -101,7 +101,6 @@ def load_plugin(module_name: str) -> None:
     try:
         plugin_module: custom_types.IPluginInterface = importlib.import_module(f"plugin.{module_name}")
         if plugin_module:
-            _log.debug(f"Plugin module loaded: {module_name}")
             plugin_module.initialize()
     except Exception as e:
         _log.exception(e)

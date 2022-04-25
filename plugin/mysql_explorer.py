@@ -114,13 +114,6 @@ class MySQLExplorer:
     """
     This class implements a plugin to provied the schema for a MySQL database
     """
-    _log: Logger
-    _log_progress: Logger
-
-    def __int__(self):
-        self._log = getLogger()
-        self._log_progress = getLogger('progress_logger')
-
     @staticmethod
     def _get_database_connection(conn_info: types.IDbConnInfo) -> MySQLConnection:
         """
@@ -357,6 +350,13 @@ class MySQLExplorer:
         """
         This method manages the extraction of the database schema
         """
+        log_progress: Logger = getLogger('progress_logger')
+
+        table_count: int = 0
+        view_count: int = 0
+
+        log_progress.info(f"*** Extracting schema for: {conn_info.database}***")
+
         database = DatabaseSchema(conn_info.database)
 
         cursor: MySQLCursorNamedTuple
@@ -369,12 +369,18 @@ class MySQLExplorer:
                 for name in table_names:
                     table = MySQLExplorer._get_table_schema(name, cursor, conn_info.database)
                     database.tables[name] = table
+                    table_count += 1
+                    log_progress.info(f"Schema extracted for table: {name}")
 
             view_names = MySQLExplorer._get_view_names(conn_info.database, cursor)
             if view_names:
                 for name in view_names:
                     view = MySQLExplorer._get_view_schema(name, cursor, conn_info.database)
                     database.views[name] = view
+                    view_count += 1
+                    log_progress.info(f"Schema extracted for view: {name}")
+
+        log_progress.info(f"*** Schema Extraction completed: tables - {table_count}, views - {view_count} ***")
 
         return database
 
