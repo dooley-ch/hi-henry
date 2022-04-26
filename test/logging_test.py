@@ -25,7 +25,7 @@ import core.system_config as sys_config
 _logs = pathlib.Path(__file__).parent.joinpath('test_data')
 _error_log: pathlib.Path = _logs.joinpath('error.log')
 _activity_log: pathlib.Path = _logs.joinpath('activity.log')
-_main_log: pathlib.Path = _logs.joinpath('main.log')
+_main_log: pathlib.Path = _logs.joinpath('core.log')
 
 
 @pytest.fixture

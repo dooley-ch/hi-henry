@@ -89,7 +89,7 @@ def configure_logging(logging_folder: Optional[Path | None] = None) -> None:
     if logging_folder is None:
         logging_folder = utils.get_logs_folder()
 
-    main_file: Path = logging_folder.joinpath('main.log')
+    main_file: Path = logging_folder.joinpath('core.log')
     activity_file: Path = logging_folder.joinpath('activity.log')
     error_file: Path = logging_folder.joinpath('error.log')
 
