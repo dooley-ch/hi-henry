@@ -27,7 +27,7 @@ from logging import Logger, getLogger
 from typing import Dict
 
 import custom_types
-import core.custom_types as types
+import archive.core.custom_types as types
 
 _plugin_explorer_creation_funcs: Dict[str, types.CreateExplorerPluginFunction] = dict()
 _plugin_generator_creation_funcs: Dict[str, types.CreateGeneratorPluginFunction] = dict()

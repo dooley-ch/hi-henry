@@ -17,8 +17,8 @@ __maintainer__ = "James Dooley"
 __status__ = "Production"
 
 import pytest
-from core.project_config import ProjectDefinition
-import plugin.mysql_explorer as plugin
+from archive.core.project_config import ProjectDefinition
+from archive import plugin as plugin
 
 
 @pytest.fixture()

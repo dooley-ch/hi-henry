@@ -17,7 +17,7 @@ __maintainer__ = "James Dooley"
 __status__ = "Production"
 
 import pathlib
-import core.project_config as config
+import archive.core.project_config as config
 
 def test_list_projects():
     file = pathlib.Path(__file__).parent.joinpath('test_data', 'projects.toml')

@@ -128,12 +128,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Py Charm
-.idea
-config/*.env
-generated/*
-!generated/*.gitkeep
-!generated/__init__.py
-logs/*
-!logs/*.gitkeep
-test/test_data/*.log
+# Project
+.DS_Store

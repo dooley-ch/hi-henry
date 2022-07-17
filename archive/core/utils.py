@@ -24,7 +24,7 @@ __all__ = ['get_config_folder', 'get_logs_folder', 'get_output_folder', 'get_con
 
 import pathlib
 import pydantic
-import core.custom_types as types
+import archive.core.custom_types as types
 
 
 class _ConfigFile(pydantic.BaseSettings):

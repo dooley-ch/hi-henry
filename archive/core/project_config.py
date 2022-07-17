@@ -25,7 +25,7 @@ from pathlib import Path
 from typing import List, Union, Dict
 import pydantic
 import tomli
-import core.utils as utils
+import archive.core.utils as utils
 
 class ProjectDefinition(pydantic.BaseModel):
     name: str

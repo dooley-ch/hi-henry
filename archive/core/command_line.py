@@ -28,9 +28,9 @@ from typing import List
 
 import typer
 
-import core.generate as generate
-import core.project_config as project_config
-import core.utils as utils
+from archive import core as generate
+import archive.core.project_config as project_config
+import archive.core.utils as utils
 
 app = typer.Typer(
     help="""This application extracts a database schema and generates a set of Pydantic classes representing 

@@ -26,7 +26,7 @@ import tomli
 from pathlib import Path
 from typing import List, Dict, Union, Optional
 from logging.config import dictConfig
-import core.utils as utils
+import archive.core.utils as utils
 
 
 class PluginInfo(pydantic.BaseModel):

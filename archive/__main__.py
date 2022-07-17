@@ -20,9 +20,8 @@ __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
 
-import core.command_line as command_line
-import core.generate as generate
-import core.system_config as config
+import archive.core.command_line as command_line
+from archive import core as generate, core as config
 
 
 def main():

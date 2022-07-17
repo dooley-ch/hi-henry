@@ -20,7 +20,7 @@ import pathlib
 import logging
 from collections import deque
 import pytest
-import core.system_config as sys_config
+from archive import core as sys_config
 
 _logs = pathlib.Path(__file__).parent.joinpath('test_data')
 _error_log: pathlib.Path = _logs.joinpath('error.log')

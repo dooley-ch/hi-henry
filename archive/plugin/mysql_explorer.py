@@ -23,8 +23,8 @@ from logging import Logger, getLogger
 from typing import Optional
 from mysql.connector import connect, MySQLConnection
 from mysql.connector.cursor import MySQLCursorNamedTuple
-import core.custom_types as types
-from core.generate import register_explorer_plugin
+import archive.core.custom_types as types
+from archive.core.generate import register_explorer_plugin
 
 
 @dataclass(frozen=True)

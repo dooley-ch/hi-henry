@@ -23,9 +23,9 @@ __all__ = ['generate_code']
 
 import pathlib
 from logging import Logger, getLogger
-import core.custom_types as types
-import core.system_config as config
-import core.utils as utils
+import archive.core.custom_types as types
+from ... import core as config
+import archive.core.utils as utils
 from ._factory import create_explorer_plugin, create_generator_plugin
 
 

@@ -24,10 +24,9 @@ from typing import List
 
 import mako.template as mako
 import pydantic
-import typer
 
-import core.custom_types as types
-from core.generate import register_generator_plugin
+import archive.core.custom_types as types
+from archive.core.generate import register_generator_plugin
 
 
 class _ColumnDefinition(pydantic.BaseModel):
