@@ -16,6 +16,6 @@ __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
 
-__all__ = ['DatabaseType', 'DtoType', 'Project', 'ProjectList', 'ProjectDict']
+__all__ = ['DatabaseType', 'DtoType', 'Project', 'ProjectList', 'ProjectDict', 'ProjectMetadataList', 'ProjectMetadata']
 
 from ._model import *
