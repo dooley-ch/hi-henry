@@ -16,6 +16,14 @@ __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
 
-__all__ = ['DatabaseType', 'DtoType', 'Project', 'ProjectList', 'ProjectDict', 'ProjectMetadataList', 'ProjectMetadata']
+__all__ = ['DatabaseType', 'DtoType', 'Project', 'ProjectList', 'ProjectDict', 'ProjectMetadataList', 'ProjectMetadata',
+           'IViewColumn', 'IViewColumns', 'IView', 'IViewList', 'IColumn', 'IColumns', 'IColumnNames', 'IIndex',
+           'IIndexes', 'IForeignKey', 'IForeignKeys', 'ITable', 'ITableList', 'IDatabase', 'ViewColumn', 'ViewColumns',
+           'View', 'ViewList', 'Column', 'Columns', 'ColumnNames', 'Index', 'Indexes', 'ForeignKey', 'ForeignKeys',
+           'Table', 'TableList', 'Database', 'IConnection', 'IDatabaseExplorer', 'IPluginInterface',
+           'CreateExplorerPluginFunction']
 
 from ._model import *
+from ._schema_interface import *
+from ._schema import *
+from ._plugin import *
