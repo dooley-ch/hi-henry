@@ -174,7 +174,7 @@ class SQLiteDatabaseExplorer:
             foreign_table = row['table']
             foreign_column = row['to']
             column = row['from']
-            keys.append(ForeignKey(name, column, foreign_table, foreign_column))
+            keys.append(ForeignKey('Unknown', column, foreign_table, foreign_column))
 
         return keys
 
