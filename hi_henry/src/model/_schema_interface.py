@@ -78,10 +78,26 @@ IViewList: typing.TypeAlias = dict[str, IView]
 
 # noinspection PyPropertyDefinition
 @typing.runtime_checkable
-class IColumn(IViewColumn):
+class IColumn(typing.Protocol):
     """
     This interface provides access to the column details needed to generate code
     """
+    @property
+    def name(self):
+        ...
+
+    @property
+    def data_type(self) -> str:
+        ...
+
+    @property
+    def order(self) -> int:
+        ...
+
+    @property
+    def length(self) -> int | None:
+        ...
+
     @property
     def default(self) -> str | None:
         ...
@@ -150,7 +166,7 @@ IIndexes: typing.TypeAlias = list[IIndex]
 
 # noinspection PyPropertyDefinition
 @typing.runtime_checkable
-class IForeignKey:
+class IForeignKey(typing.Protocol):
     """
     This class holds the details of a foreign key
     """

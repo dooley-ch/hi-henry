@@ -74,7 +74,7 @@ class Column:
                                       validator=attrs.validators.optional(attrs.validators.instance_of(str)))
 
 
-Columns: typing.TypeAlias = list[Column]
+Columns: typing.TypeAlias = dict[str, Column]
 
 ColumnNames: typing.TypeAlias = list[str]
 

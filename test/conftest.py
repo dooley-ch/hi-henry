@@ -17,6 +17,7 @@ __maintainer__ = "James Dooley"
 __status__ = "Production"
 
 from pathlib import Path
+import attrs
 import pytest
 
 
@@ -48,3 +49,27 @@ def error_log_file_name(app_folder) -> Path:
 @pytest.fixture(scope="session")
 def map_file_name(app_folder) -> Path:
     return app_folder.joinpath('map.cfg')
+
+
+@attrs.frozen(kw_only=True)
+class Connection:
+    database: str | None = attrs.field(default=None)
+    user: str | None = attrs.field(default=None)
+    password: str | None = attrs.field(default=None)
+    host: str = attrs.field(default="localhost")
+    port: int | None = attrs.field(default=None)
+
+
+@pytest.fixture(scope="session")
+def sqlite_connection() -> Connection:
+    return Connection(database="mistral", host="/Users/jdooley/SQLite-Databases/mistral.sqlite")
+
+
+@pytest.fixture(scope="session")
+def mysql_connection() -> Connection:
+    pass
+
+
+@pytest.fixture(scope="session")
+def postgresql_connection() -> Connection:
+    pass
