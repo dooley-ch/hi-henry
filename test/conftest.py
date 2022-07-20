@@ -67,9 +67,9 @@ def sqlite_connection() -> Connection:
 
 @pytest.fixture(scope="session")
 def mysql_connection() -> Connection:
-    pass
+    return Connection(database="mistral", user="root", password="mysql*347", port=3306)
 
 
 @pytest.fixture(scope="session")
 def postgresql_connection() -> Connection:
-    pass
+    return Connection(database="mistral", user="root", password="root*347", port=5432)

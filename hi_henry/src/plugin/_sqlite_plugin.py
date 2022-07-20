@@ -19,9 +19,7 @@ __all__ = ['SQLiteDatabaseExplorer']
 
 import re
 import sqlite3
-
 import attrs
-
 from ..model import ViewColumn, View, Column, Index, ForeignKey, Table, Database, IConnection, DatabaseType
 
 

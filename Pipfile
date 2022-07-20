@@ -8,6 +8,7 @@ click = "*"
 attrs = "*"
 tinydb = "*"
 pendulum = "*"
+mysql-connector-python = "*"
 
 [dev-packages]
 pytest = "*"
