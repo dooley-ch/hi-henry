@@ -19,8 +19,10 @@ __all__ = ['SQLiteDatabaseExplorer']
 
 import re
 import sqlite3
+from pathlib import Path
 import attrs
 from ..model import ViewColumn, View, Column, Index, ForeignKey, Table, Database, IConnection, DatabaseType
+from ..errors import DatabaseNotFoundError
 
 
 # noinspection SqlDialectInspection
@@ -207,6 +209,10 @@ class SQLiteDatabaseExplorer:
     # endregion
 
     def extract(self, conn: IConnection) -> Database:
+        db_file = Path(conn.host)
+        if not db_file.exists():
+            raise DatabaseNotFoundError(f"The following database could not be located: {conn.host}")
+
         con = sqlite3.connect(conn.host)
         con.row_factory = sqlite3.Row
 

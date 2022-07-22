@@ -16,7 +16,7 @@ __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
 
-__all__ = ['DuplicateRecordError', 'RecordNotFoundError']
+__all__ = ['DuplicateRecordError', 'RecordNotFoundError', 'DatabaseNotFoundError', 'SchemaNotFoundError']
 
 
 class AppError(Exception):
@@ -36,5 +36,19 @@ class DuplicateRecordError(AppError):
 class RecordNotFoundError(AppError):
     """
     Raised when there is no record to update
+    """
+    pass
+
+
+class DatabaseNotFoundError(AppError):
+    """
+    Raised when the DBMS does not contain the required database
+    """
+    pass
+
+
+class SchemaNotFoundError(DatabaseNotFoundError):
+    """
+    Raised when the DBMS does not contain the required schema
     """
     pass

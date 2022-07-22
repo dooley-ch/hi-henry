@@ -22,6 +22,7 @@ from contextlib import contextmanager
 from mysql.connector import connect, MySQLConnection
 from mysql.connector.cursor import MySQLCursorNamedTuple
 from ..model import ViewColumn, View, Column, Index, ForeignKey, Table, Database, IConnection, DatabaseType
+from ..errors import SchemaNotFoundError
 
 
 # noinspection SqlDialectInspection
@@ -222,10 +223,29 @@ class MySQLDatabaseExplorer:
 
     # endregion
 
+    def _get_database_names(self, con: IConnection) -> list[str]:
+        """
+        This method returns a list of the databases on the server
+        """
+        names = list()
+
+        with self._database_cursor(con) as cursor:
+            cursor.execute("""SELECT SCHEMA_NAME AS name FROM INFORMATION_SCHEMA.SCHEMATA;""")
+            rows = cursor.fetchall()
+            if rows:
+                for row in rows:
+                    names.append(row.name)
+
+        return names
+
     def extract(self, con: IConnection) -> Database:
         """
         This method extracts the database schema
         """
+        databases = self._get_database_names(con)
+        if not con.database in databases:
+            raise SchemaNotFoundError(f"The following database could not be found: {con.database}")
+
         db = Database(con.database, DatabaseType.MySQL)
 
         # Views

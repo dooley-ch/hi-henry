@@ -23,9 +23,9 @@ from typing import Any
 
 import attrs
 import psycopg2
-
 from ..model import ViewColumn, View, Column, Index, ForeignKey, Table, Database, IConnection, DatabaseType, \
     DatabaseInfo, SchemaInfo
+from ..errors import DatabaseNotFoundError, SchemaNotFoundError
 
 
 # noinspection SqlDialectInspection
@@ -292,14 +292,19 @@ class PostgreSqlDatabaseExplorer:
         """
         This method extracts the database schema
         """
+
+        # Make sure the database exists
         db_info = self._get_database_details(con)
         if not db_info:
-            return None
+            raise DatabaseNotFoundError(f"The following database could not be found: {con.database}")
 
+        # Determine the schema to use and make sure it exists
         schema_name = 'public'
         schema_infos = self._get_schema_names(con)
         if con.database in schema_infos:
             schema_name = con.database
+        if not schema_name in schema_infos:
+            raise SchemaNotFoundError(f"The following schema could not be found: {schema_name}")
 
         db = Database(con.database, DatabaseType.PostgreSQL)
 
