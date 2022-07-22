@@ -20,8 +20,8 @@ __all__ = ['DatabaseType', 'DtoType', 'Project', 'ProjectList', 'ProjectDict', '
            'IViewColumn', 'IViewColumns', 'IView', 'IViewList', 'IColumn', 'IColumns', 'IColumnNames', 'IIndex',
            'IIndexes', 'IForeignKey', 'IForeignKeys', 'ITable', 'ITableList', 'IDatabase', 'ViewColumn', 'ViewColumns',
            'View', 'ViewList', 'Column', 'Columns', 'ColumnNames', 'Index', 'Indexes', 'ForeignKey', 'ForeignKeys',
-           'Table', 'TableList', 'Database', 'IConnection', 'IDatabaseExplorer', 'IPluginInterface',
-           'CreateExplorerPluginFunction']
+           'Table', 'TableList', 'Database', 'DatabaseInfo', 'IConnection', 'IDatabaseExplorer', 'IPluginInterface',
+           'CreateExplorerPluginFunction', 'SchemaInfo']
 
 from ._model import *
 from ._schema_interface import *

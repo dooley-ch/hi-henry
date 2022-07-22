@@ -16,7 +16,9 @@ __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
 
-__all__ = ['SQLiteDatabaseExplorer', 'MySQLDatabaseExplorer']
+__all__ = ['SQLiteDatabaseExplorer', 'MySQLDatabaseExplorer', 'PostgreSqlDatabaseExplorer']
 
 from ._sqlite_plugin import *
 from ._mysql_plugin import *
+from ._postgresql_plugin import *
+from ._sqlite_plugin import *

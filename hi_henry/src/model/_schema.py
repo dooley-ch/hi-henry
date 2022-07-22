@@ -17,11 +17,32 @@ __maintainer__ = "James Dooley"
 __status__ = "Production"
 
 __all__ = ['ViewColumn', 'ViewColumns', 'View', 'ViewList', 'Column', 'Columns', 'ColumnNames',
-           'Index', 'Indexes', 'ForeignKey', 'ForeignKeys', 'Table', 'TableList', 'Database']
+           'Index', 'Indexes', 'ForeignKey', 'ForeignKeys', 'Table', 'TableList', 'Database', 'DatabaseInfo',
+           'SchemaInfo']
 
 import typing
 import attrs
 from ._model import DatabaseType
+
+
+@attrs.frozen
+class DatabaseInfo:
+    """
+    This class holds details of the database
+    """
+    id: int
+    name: str
+    owner: str
+
+
+@attrs.frozen
+class SchemaInfo:
+    """
+    This class holds details of a database schema
+    """
+    id: int
+    name: str
+    owner: str
 
 
 @attrs.frozen

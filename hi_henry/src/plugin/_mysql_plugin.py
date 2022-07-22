@@ -19,8 +19,6 @@ __status__ = "Production"
 __all__ = ['MySQLDatabaseExplorer']
 
 from contextlib import contextmanager
-
-import attrs
 from mysql.connector import connect, MySQLConnection
 from mysql.connector.cursor import MySQLCursorNamedTuple
 from ..model import ViewColumn, View, Column, Index, ForeignKey, Table, Database, IConnection, DatabaseType

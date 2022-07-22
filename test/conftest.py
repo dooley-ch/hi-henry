@@ -72,4 +72,4 @@ def mysql_connection() -> Connection:
 
 @pytest.fixture(scope="session")
 def postgresql_connection() -> Connection:
-    return Connection(database="mistral", user="root", password="root*347", port=5432)
+    return Connection(database="mistral", user='jdooley', port=5432)
