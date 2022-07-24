@@ -34,18 +34,20 @@ class SQLiteDatabaseExplorer:
     # region Views
 
     @staticmethod
-    def _get_view_names(con: sqlite3.Connection) -> list[str] | None:
+    def _get_view_names(con: sqlite3.Connection) -> list[str]:
         """
         Returns the names of the tables in the database
         """
+        table_names = list()
+
         cursor = con.cursor()
         rows = cursor.execute("""SELECT name FROM sqlite_schema 
                                     WHERE type ='view' AND name NOT LIKE 'sqlite_%' ORDER BY name;""").fetchall()
         if rows:
-            table_names = list()
             for row in rows:
                 table_names.append(row['name'])
-            return table_names
+
+        return table_names
 
     @staticmethod
     def _get_view(con: sqlite3.Connection, name: str) -> View:
@@ -53,7 +55,7 @@ class SQLiteDatabaseExplorer:
         This method extracts the view definition
         """
         cursor = con.cursor()
-        vw = View(name)
+        view = View(name)
 
         # Columns
         rows = cursor.execute(f"pragma table_info('{name}');").fetchall()
@@ -63,27 +65,29 @@ class SQLiteDatabaseExplorer:
                 data_type = row['type']
                 order = row['cid']
 
-                vw.columns[name] = ViewColumn(name, data_type, order, 0)
+                view.columns[name] = ViewColumn(name, data_type, order, 0)
 
-        return vw
+        return view
 
     # endregion
 
     # region Tables
 
     @staticmethod
-    def _get_table_names(con: sqlite3.Connection) -> list[str] | None:
+    def _get_table_names(con: sqlite3.Connection) -> list[str]:
         """
         Returns the names of the tables in the database
         """
+        table_names = list()
+
         cursor = con.cursor()
         rows = cursor.execute("""SELECT name FROM sqlite_schema 
                                     WHERE type ='table' AND name NOT LIKE 'sqlite_%' ORDER BY name;""").fetchall()
         if rows:
-            table_names = list()
             for row in rows:
                 table_names.append(row['name'])
-            return table_names
+
+        return table_names
 
     @staticmethod
     def _get_table_columns(con: sqlite3.Connection, name: str) -> list[Column]:
@@ -109,7 +113,7 @@ class SQLiteDatabaseExplorer:
         return columns
 
     @staticmethod
-    def _get_auto_column_name(con: sqlite3.Connection, name: str) -> str:
+    def _get_auto_column_name(con: sqlite3.Connection, name: str) -> str | None:
         """
         This function attempts to parse the SQL used to create the table in order to
         find the auto inc field, if one exists
@@ -123,8 +127,6 @@ class SQLiteDatabaseExplorer:
                 upper_line = line.upper()
                 if 'AUTOINCREMENT' in upper_line:
                     return re.split("\s", line)[0].strip('"')
-
-        return ''
 
     @staticmethod
     def _get_index_columns(con: sqlite3.Connection, name: str) -> list[str]:

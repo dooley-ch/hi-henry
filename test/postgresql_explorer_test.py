@@ -17,9 +17,10 @@ __maintainer__ = "James Dooley"
 __status__ = "Production"
 __all__ = []
 
-
+import pytest
 import hi_henry.src.plugin as plugin
 import hi_henry.src.model as model
+import hi_henry.src.errors as errors
 
 
 class TestPostgreSqlExplorer:
@@ -32,6 +33,14 @@ class TestPostgreSqlExplorer:
         assert schema.type == model.DatabaseType.PostgreSQL
         assert len(schema.views) == 2
         assert len(schema.tables) == 27
+
+    def test_invalid_database(self, invalid_postgresql_connection: model.IConnection) -> None:
+        explorer = plugin.PostgreSqlDatabaseExplorer()
+
+        with pytest.raises(errors.DatabaseNotFoundError) as e:
+            explorer.extract(invalid_postgresql_connection)
+
+        assert 'The following database could not be found' in str(e)
 
     def test_views(self, postgresql_connection: model.IConnection) -> None:
         explorer = plugin.PostgreSqlDatabaseExplorer()

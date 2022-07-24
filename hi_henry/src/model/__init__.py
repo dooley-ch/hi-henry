@@ -21,9 +21,10 @@ __all__ = ['DatabaseType', 'DtoType', 'Project', 'ProjectList', 'ProjectDict', '
            'IIndexes', 'IForeignKey', 'IForeignKeys', 'ITable', 'ITableList', 'IDatabase', 'ViewColumn', 'ViewColumns',
            'View', 'ViewList', 'Column', 'Columns', 'ColumnNames', 'Index', 'Indexes', 'ForeignKey', 'ForeignKeys',
            'Table', 'TableList', 'Database', 'DatabaseInfo', 'IConnection', 'IDatabaseExplorer', 'IPluginInterface',
-           'CreateExplorerPluginFunction', 'SchemaInfo']
+           'CreateExplorerPluginFunction', 'SchemaInfo', 'DataTypeMap']
 
 from ._model import *
 from ._schema_interface import *
 from ._schema import *
 from ._plugin import *
+from ._data_type_map import *

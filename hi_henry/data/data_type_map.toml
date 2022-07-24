@@ -1,0 +1,39 @@
+# *******************************************************************************************
+#  File:  data_type_map.toml
+#
+#  Created: 24-07-2022
+#
+#  Description: This file contains the data type mapping definitions
+#
+#  History:
+#  24-07-2022: Initial version
+#
+# *******************************************************************************************
+
+[[maps]]
+name = "SQLite_To_Standard"
+from_type = "SQLite"
+to_type = "Standard"
+default_type = "String"
+INTEGER = "Integer"
+REAL = "Float"
+TEXT = "String"
+BLOB = "Binary"
+
+[[maps]]
+name = "MySQL_To_Standard"
+from_type = "MySQL"
+to_type = "Standard"
+default_type = "String"
+
+[[maps]]
+name = "PostgreSql_To_Standard"
+from_type = "PostgreSql"
+to_type = "Standard"
+default_type = "String"
+
+[[maps]]
+name = "Standard_To_Python"
+from_type = "Standard"
+to_type = "Python"
+default_type = "str"

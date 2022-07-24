@@ -19,6 +19,7 @@ __status__ = "Production"
 from pathlib import Path
 import attrs
 import pytest
+from hi_henry.src.model import DataTypeMap
 
 
 @pytest.fixture(scope="session")
@@ -26,9 +27,13 @@ def app_folder() -> Path:
     return Path(__file__).parent.joinpath('app_folder')
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def database_file_name(app_folder) -> Path:
-    return app_folder.joinpath('projects.json')
+    db_file = app_folder.joinpath('projects.json')
+    if db_file.exists():
+        db_file.unlink()
+
+    return db_file
 
 
 @pytest.fixture(scope="session")
@@ -62,7 +67,14 @@ class Connection:
 
 @pytest.fixture(scope="session")
 def sqlite_connection() -> Connection:
-    return Connection(database="mistral", host="/Users/jdooley/SQLite-Databases/mistral.sqlite")
+    database_file = Path(__file__).parent.joinpath('data', 'mistral.sqlite')
+    return Connection(database="mistral", host=str(database_file.resolve()))
+
+
+@pytest.fixture(scope="session")
+def invalid_sqlite_connection() -> Connection:
+    database_file = Path(__file__).parent.joinpath('data', 'mistral_xxx.sqlite')
+    return Connection(database="mistral", host=str(database_file.resolve()))
 
 
 @pytest.fixture(scope="session")
@@ -71,5 +83,42 @@ def mysql_connection() -> Connection:
 
 
 @pytest.fixture(scope="session")
+def invalid_mysql_connection() -> Connection:
+    return Connection(database="new_mistral", user="root", password="mysql*347", port=3306)
+
+
+@pytest.fixture(scope="session")
 def postgresql_connection() -> Connection:
     return Connection(database="mistral", user='jdooley', port=5432)
+
+
+@pytest.fixture(scope="session")
+def invalid_postgresql_connection() -> Connection:
+    return Connection(database="new_mistral", user='jdooley', port=5432)
+
+
+@pytest.fixture
+def data_maps_config_file() -> Path:
+    return Path(__file__).parent.parent.joinpath('hi_henry', 'data', 'data_type_map.toml')
+
+
+@pytest.fixture
+def sample_data_map_1() -> DataTypeMap:
+    record = DataTypeMap('SQLite_To_Standard', 'SQLite', 'Standard', 'String')
+    record.map['INTEGER'] = 'Integer'
+    record.map['REAL'] = 'Float'
+    record.map['TEXT'] = 'String'
+    record.map['BLOB'] = 'Binary'
+
+    return record
+
+
+@pytest.fixture
+def sample_data_map_2() -> DataTypeMap:
+    record = DataTypeMap("MySQL_To_Standard", "MySQL", 'Standard', 'String')
+    record.map['INTEGER'] = 'Integer'
+    record.map['REAL'] = 'Float'
+    record.map['TEXT'] = 'String'
+    record.map['BLOB'] = 'Binary'
+
+    return record

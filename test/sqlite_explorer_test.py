@@ -18,9 +18,10 @@ __status__ = "Production"
 
 __all__ = []
 
-
+import pytest
 import hi_henry.src.plugin as plugin
 import hi_henry.src.model as model
+import hi_henry.src.errors as errors
 
 
 class TestSQLiteExplorer:
@@ -33,6 +34,14 @@ class TestSQLiteExplorer:
         assert schema.type == model.DatabaseType.SQLite
         assert len(schema.views) == 2
         assert len(schema.tables) == 26
+
+    def test_invalid_database(self, invalid_sqlite_connection: model.IConnection) -> None:
+        explorer = plugin.SQLiteDatabaseExplorer()
+
+        with pytest.raises(errors.DatabaseNotFoundError) as e:
+            explorer.extract(invalid_sqlite_connection)
+
+        assert 'The following database could not be located' in str(e)
 
     def test_views(self, sqlite_connection: model.IConnection) -> None:
         explorer = plugin.SQLiteDatabaseExplorer()
@@ -121,4 +130,3 @@ class TestSQLiteExplorerTable:
 
         assert index.name == 'sqlite_autoindex_album_1'
         assert index.is_unique
-

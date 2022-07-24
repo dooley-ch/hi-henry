@@ -21,8 +21,9 @@ __all__ = ['MySQLDatabaseExplorer']
 from contextlib import contextmanager
 from mysql.connector import connect, MySQLConnection
 from mysql.connector.cursor import MySQLCursorNamedTuple
+from mysql.connector.errors import ProgrammingError
 from ..model import ViewColumn, View, Column, Index, ForeignKey, Table, Database, IConnection, DatabaseType
-from ..errors import SchemaNotFoundError
+from ..errors import DatabaseNotFoundError
 
 
 # noinspection SqlDialectInspection
@@ -55,10 +56,12 @@ class MySQLDatabaseExplorer:
 
     # region Views
 
-    def _get_view_names(self, con: IConnection) -> list[str] | None:
+    def _get_view_names(self, con: IConnection) -> list[str]:
         """
         This method returns the names of the views in a database
         """
+        names = list()
+
         with self._database_cursor(con) as cursor:
             cursor.execute(f"""SELECT TABLE_NAME AS name FROM information_schema.tables
                                 WHERE (TABLE_SCHEMA = %s) AND (TABLE_TYPE = 'VIEW')
@@ -66,13 +69,17 @@ class MySQLDatabaseExplorer:
 
             rows = cursor.fetchall()
             if rows:
-                return [row.name for row in rows]
+                for row in rows:
+                    names.append(row.name)
+
+        return names
 
     def _get_view_columns(self, view: str, con: IConnection) -> list[ViewColumn]:
         """
         This method extracts the column metadata for a view
         """
         columns = list()
+
         with self._database_cursor(con) as cursor:
             cursor.execute(f"""SELECT COLUMN_NAME AS name, ORDINAL_POSITION AS position, DATA_TYPE AS data_type,
                                     CHARACTER_MAXIMUM_LENGTH AS length  FROM INFORMATION_SCHEMA.COLUMNS
@@ -85,36 +92,38 @@ class MySQLDatabaseExplorer:
                     columns.append(ViewColumn(row.name, row.data_type.decode('UTF-8'), row.position, row.length))
             return columns
 
-    def _get_view(self, name: str, con: IConnection) -> View | None:
+    def _get_view(self, name: str, con: IConnection) -> View:
         """
         This method extracts the table metadata from the database
         """
-        with self._database_cursor(con) as cursor:
-            cursor.execute("""SELECT TABLE_COMMENT AS comment FROM information_schema.tables
-                                WHERE (TABLE_SCHEMA = %s) AND (TABLE_TYPE = 'VIEW') 
-                                AND (TABLE_NAME = %s);""", (con.database, name))
-            row = cursor.fetchone()
-            if row:
-                view = View(name, comment=row.comment)
+        view = View(name)
 
-                cols = self._get_view_columns(name, con)
-                for col in cols:
-                    view.columns[col.name] = col
+        cols = self._get_view_columns(name, con)
+        for col in cols:
+            view.columns[col.name] = col
 
-                return view
+        return view
 
     # endregion
 
     # region Tables
 
-    def _get_table_names(self, database_name: str, con: IConnection) -> list[str] | None:
+    def _get_table_names(self, database_name: str, con: IConnection) -> list[str]:
+        """
+        This method extracts the list of table names
+        """
+        names = list()
+
         with self._database_cursor(con) as cursor:
             cursor.execute(f"""SELECT TABLE_NAME AS name FROM information_schema.tables
                                 WHERE (TABLE_SCHEMA = %s) AND (TABLE_TYPE = 'BASE TABLE') 
                                 ORDER BY TABLE_NAME;""", (database_name,))
             rows = cursor.fetchall()
             if rows:
-                return [row.name for row in rows]
+                for row in rows:
+                    names.append(row.name)
+
+        return names
 
     def _get_columns(self, table: str, con: IConnection) -> list[Column]:
         """
@@ -194,32 +203,26 @@ class MySQLDatabaseExplorer:
 
         return keys
 
-    def _get_table(self, name: str, con: IConnection) -> Table | None:
+    def _get_table(self, name: str, con: IConnection) -> Table:
         """
         This method extracts the table metadata from the database
         """
-        with self._database_cursor(con) as cursor:
-            cursor.execute("""SELECT TABLE_COMMENT AS comment FROM information_schema.tables
-                                WHERE (TABLE_SCHEMA = %s) AND (TABLE_TYPE = 'BASE TABLE') 
-                                    AND (TABLE_NAME = %s);""", (con.database, name))
-            row = cursor.fetchone()
-            if row:
-                tbl = Table(name, comment=row.comment)
+        tbl = Table(name)
 
-                # Columns
-                cols = self._get_columns(name, con)
-                for col in cols:
-                    tbl.columns[col.name] = col
+        # Columns
+        cols = self._get_columns(name, con)
+        for col in cols:
+            tbl.columns[col.name] = col
 
-                # Indexes
-                indexes = self._get_indexes(name, con)
-                tbl.indexes.extend(indexes)
+        # Indexes
+        indexes = self._get_indexes(name, con)
+        tbl.indexes.extend(indexes)
 
-                # Foreign Keys
-                keys = self._get_foreign_keys(name, con)
-                tbl.foreign_keys.extend(keys)
+        # Foreign Keys
+        keys = self._get_foreign_keys(name, con)
+        tbl.foreign_keys.extend(keys)
 
-                return tbl
+        return tbl
 
     # endregion
 
@@ -242,22 +245,23 @@ class MySQLDatabaseExplorer:
         """
         This method extracts the database schema
         """
-        databases = self._get_database_names(con)
-        if not con.database in databases:
-            raise SchemaNotFoundError(f"The following database could not be found: {con.database}")
+        try:
+            # check that the connection to the database works
+            self._get_database_names(con)
+        except ProgrammingError as ex:
+            if 'Unknown database' in str(ex):
+                raise DatabaseNotFoundError(f"The following database could not be found: {con.database}")
 
         db = Database(con.database, DatabaseType.MySQL)
 
         # Views
         view_names = self._get_view_names(con)
-        if view_names:
-            for name in view_names:
-                db.views[name] = self._get_view(name, con)
+        for name in view_names:
+            db.views[name] = self._get_view(name, con)
 
         # Tables
         table_names = self._get_table_names(con.database, con)
-        if table_names:
-            for name in table_names:
-                db.tables[name] = self._get_table(name, con)
+        for name in table_names:
+            db.tables[name] = self._get_table(name, con)
 
         return db

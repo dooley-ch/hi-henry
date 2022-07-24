@@ -19,19 +19,51 @@ __status__ = "Production"
 __all__ = []
 
 import attrs
-
 import pytest
 import hi_henry.src.dbms as dbms
 import hi_henry.src.model as model
 import hi_henry.src.errors as errors
 
 
-class TestDBMS:
-    def test_insert(self, database_file_name) -> None:
-        if database_file_name.exists():
-            database_file_name.unlink()
+class TestMapsTable:
+    def test_insert(self, database_file_name, sample_data_map_1) -> None:
+        db = dbms.MapStore(database_file_name)
+        rec_id = db.insert(sample_data_map_1)
+        assert rec_id >= 1
 
-        db = dbms.Database(database_file_name)
+    def test_insert_duplicate(self, database_file_name, sample_data_map_1) -> None:
+        db = dbms.MapStore(database_file_name)
+        rec_id = db.insert(sample_data_map_1)
+        assert rec_id >= 1
+
+        with pytest.raises(errors.DuplicateRecordError) as e:
+            db.insert(sample_data_map_1)
+
+        assert "A Data Map with the name" in str(e)
+
+    def test_get(self, database_file_name, sample_data_map_1, sample_data_map_2) -> None:
+        db = dbms.MapStore(database_file_name)
+        rec_id = db.insert(sample_data_map_1)
+        assert rec_id >= 1
+
+        rec_id = db.insert(sample_data_map_2)
+        assert rec_id >= 2
+
+        record = db.get('SQLite', 'Standard')
+        assert record
+        assert record.name == 'SQLite_To_Standard'
+        assert record.from_type == 'SQLite'
+        assert record.to_type == 'Standard'
+
+    def test_get_none(self, database_file_name) -> None:
+        db = dbms.MapStore(database_file_name)
+        record = db.get('SQLite', 'Standard')
+        assert record is None
+
+
+class TestProjectsTable:
+    def test_insert(self, database_file_name) -> None:
+        db = dbms.ProjectStore(database_file_name)
         record = model.Project('Project 1', model.DatabaseType.MySQL, model.DtoType.Attrs,
                                'joey_data', 'joe', 'letjoeyin', '1.0.0.127', 5432)
         rec_id = db.insert(record)
@@ -40,10 +72,7 @@ class TestDBMS:
         assert database_file_name.exists()
 
     def test_insert_duplicate(self, database_file_name) -> None:
-        if database_file_name.exists():
-            database_file_name.unlink()
-
-        db = dbms.Database(database_file_name)
+        db = dbms.ProjectStore(database_file_name)
         record = model.Project('Project 1', model.DatabaseType.MySQL, model.DtoType.Attrs,
                                'joey_data', 'joe', 'letjoeyin', '1.0.0.127', 5432)
         rec_id = db.insert(record)
@@ -55,11 +84,8 @@ class TestDBMS:
             db.insert(record)
         assert record.name in str(e)
 
-    def test_get_project(self, database_file_name) -> None:
-        if database_file_name.exists():
-            database_file_name.unlink()
-
-        db = dbms.Database(database_file_name)
+    def test_get(self, database_file_name) -> None:
+        db = dbms.ProjectStore(database_file_name)
         record = model.Project('Project 1', model.DatabaseType.MySQL, model.DtoType.Attrs,
                                'joey_data', 'joe', 'letjoeyin', '1.0.0.127', 5432)
         rec_id = db.insert(record)
@@ -80,18 +106,12 @@ class TestDBMS:
         assert record.port == new_record.port
 
     def test_get_project_none(self, database_file_name) -> None:
-        if database_file_name.exists():
-            database_file_name.unlink()
-
-        db = dbms.Database(database_file_name)
+        db = dbms.ProjectStore(database_file_name)
         record = db.get("Project 10")
         assert record is None
 
     def test_update(self, database_file_name) -> None:
-        if database_file_name.exists():
-            database_file_name.unlink()
-
-        db = dbms.Database(database_file_name)
+        db = dbms.ProjectStore(database_file_name)
         record = model.Project('Project 1', model.DatabaseType.MySQL, model.DtoType.Attrs,
                                'joey_data', 'joe', 'letjoeyin', '1.0.0.127', 5432)
         rec_id = db.insert(record)
@@ -110,10 +130,7 @@ class TestDBMS:
         assert record.dto != update_record.dto
 
     def test_update_none(self, database_file_name) -> None:
-        if database_file_name.exists():
-            database_file_name.unlink()
-
-        db = dbms.Database(database_file_name)
+        db = dbms.ProjectStore(database_file_name)
         record = model.Project('Project 1', model.DatabaseType.MySQL, model.DtoType.Attrs,
                                'joey_data', 'joe', 'letjoeyin', '1.0.0.127', 5432)
 
@@ -122,10 +139,7 @@ class TestDBMS:
         assert record.name in str(e)
 
     def test_get_projects(self, database_file_name) -> None:
-        if database_file_name.exists():
-            database_file_name.unlink()
-
-        db = dbms.Database(database_file_name)
+        db = dbms.ProjectStore(database_file_name)
 
         record = model.Project('Project 1', model.DatabaseType.MySQL, model.DtoType.Attrs,
                                'joey_data', 'joe', 'letjoeyin', '1.0.0.127', 5432)
@@ -147,14 +161,11 @@ class TestDBMS:
                                'joey_data', 'joe', 'letjoeyin', '1.0.0.127', 5432)
         db.insert(record)
 
-        rows = db.get_projects()
+        rows = db.all()
         assert len(rows) == 5
 
     def test_get_projects_none(self, database_file_name) -> None:
-        if database_file_name.exists():
-            database_file_name.unlink()
+        db = dbms.ProjectStore(database_file_name)
 
-        db = dbms.Database(database_file_name)
-
-        rows = db.get_projects()
+        rows = db.all()
         assert rows is None

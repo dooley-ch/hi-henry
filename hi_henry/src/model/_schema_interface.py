@@ -147,12 +147,10 @@ class IIndex(typing.Protocol):
         ...
 
     @property
-    def comment(self) -> str | None:
-        ...
-
     def is_unique(self) -> bool:
         ...
 
+    @property
     def is_primary(self) -> bool:
         ...
 

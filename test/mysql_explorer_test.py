@@ -18,9 +18,10 @@ __status__ = "Production"
 
 __all__ = []
 
-
+import pytest
 import hi_henry.src.plugin as plugin
 import hi_henry.src.model as model
+import hi_henry.src.errors as errors
 
 
 class TestMySQLExplorer:
@@ -50,6 +51,14 @@ class TestMySQLExplorer:
 
         view = schema.views['playlists']
         assert len(view.columns) == 3
+
+    def test_invalid_database(self, invalid_mysql_connection: model.IConnection) -> None:
+        explorer = plugin.MySQLDatabaseExplorer()
+
+        with pytest.raises(errors.DatabaseNotFoundError) as e:
+            explorer.extract(invalid_mysql_connection)
+
+        assert 'The following database could not be found' in str(e)
 
     def test_tables(self, mysql_connection: model.IConnection) -> None:
         explorer = plugin.MySQLDatabaseExplorer()

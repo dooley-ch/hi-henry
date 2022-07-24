@@ -72,6 +72,7 @@ class Project:
         return Project(self.name, self.dbms, self.dto, self.database, self.user, self.password, self.host, self.port,
                        self.lock_version, self.created_at, self.updated_at)
 
+
 ProjectList = NewType("ProjectList", list[Project])
 
 ProjectDict = NewType("ProjectDict", dict[str, Project])

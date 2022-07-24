@@ -62,3 +62,4 @@ def map_file_name() -> Path:
     This function returns the name of the error log file
     """
     return _app_folder().joinpath('map.cfg')
+

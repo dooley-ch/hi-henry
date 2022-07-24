@@ -294,32 +294,33 @@ class PostgreSqlDatabaseExplorer:
         """
 
         # Make sure the database exists
-        db_info = self._get_database_details(con)
-        if not db_info:
-            raise DatabaseNotFoundError(f"The following database could not be found: {con.database}")
+        try:
+            # check that the connection to the database works
+            self._get_database_details(con)
+        except psycopg2.OperationalError as ex:
+            if 'does not exist' in str(ex):
+                raise DatabaseNotFoundError(f"The following database could not be found: {con.database}")
 
         # Determine the schema to use and make sure it exists
         schema_name = 'public'
         schema_infos = self._get_schema_names(con)
         if con.database in schema_infos:
             schema_name = con.database
-        if not schema_name in schema_infos:
+        if schema_name not in schema_infos:
             raise SchemaNotFoundError(f"The following schema could not be found: {schema_name}")
 
         db = Database(con.database, DatabaseType.PostgreSQL)
 
         # Tables
         table_names = self._get_table_names(schema_name, con)
-        if table_names:
-            for table_name in table_names:
-                table = self._get_table(table_name, schema_name, con)
-                db.tables[table.name] = table
+        for table_name in table_names:
+            table = self._get_table(table_name, schema_name, con)
+            db.tables[table.name] = table
 
         # Views
         view_names = self._get_view_names(schema_name, con)
-        if view_names:
-            for view_name in view_names:
-                view = self._get_view(view_name, schema_name, con)
-                db.views[view.name] = view
+        for view_name in view_names:
+            view = self._get_view(view_name, schema_name, con)
+            db.views[view.name] = view
 
         return db
