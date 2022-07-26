@@ -22,6 +22,7 @@ import pytest
 import hi_henry.src.plugin as plugin
 import hi_henry.src.model as model
 import hi_henry.src.errors as errors
+import hi_henry.src.data_maps as data_maps
 
 
 class TestSQLiteExplorer:
@@ -130,3 +131,15 @@ class TestSQLiteExplorerTable:
 
         assert index.name == 'sqlite_autoindex_album_1'
         assert index.is_unique
+
+
+class TestSQLiteStandardSchema:
+    def test_standard_schema(self, sqlite_connection: model.IConnection, sample_type_map: data_maps.TypeMap) -> None:
+        explorer = plugin.SQLiteDatabaseExplorer()
+        schema = explorer.to_standard_schema(sqlite_connection, sample_type_map)
+
+        assert schema
+        assert schema.name == "mistral"
+        assert schema.type == model.DatabaseType.SQLite
+        assert len(schema.views) == 2
+        assert len(schema.tables) == 26

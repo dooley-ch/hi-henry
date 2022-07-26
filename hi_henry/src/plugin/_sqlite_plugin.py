@@ -21,7 +21,10 @@ import re
 import sqlite3
 from pathlib import Path
 import attrs
-from ..model import ViewColumn, View, Column, Index, ForeignKey, Table, Database, IConnection, DatabaseType
+from ..data_maps import TypeMap
+from ..model import ViewColumn, View, Column, Index, ForeignKey, Table, Database, IConnection, DatabaseType, \
+    DatabaseMetadata, ViewMetaData, ViewColumnMetadata, TableMetaData, ColumnMetadata, IndexMetadata, \
+    ForeignKeyMetadata, StandardDataType
 from ..errors import DatabaseNotFoundError
 
 
@@ -122,7 +125,7 @@ class SQLiteDatabaseExplorer:
         row = cursor.execute(f"SELECT sql FROM sqlite_master where name = '{name}';").fetchone()
         if row:
             sql = row['sql']
-            lines = [item.strip() for item in sql[sql.find("(")+1:sql.find(")")].split(',')]
+            lines = [item.strip() for item in sql[sql.find("(") + 1:sql.find(")")].split(',')]
             for line in lines:
                 upper_line = line.upper()
                 if 'AUTOINCREMENT' in upper_line:
@@ -210,24 +213,67 @@ class SQLiteDatabaseExplorer:
 
     # endregion
 
-    def extract(self, conn: IConnection) -> Database:
-        db_file = Path(conn.host)
+    def to_standard_schema(self, con: IConnection, type_map: TypeMap) -> DatabaseMetadata:
+        """
+        This method returns the database schema in a standard format
+        """
+        data = self.extract(con)
+
+        meta = DatabaseMetadata(data.name, data.type)
+
+        for _, view in data.views.items():
+            m_view = ViewMetaData(view.name)
+            for _, col in view.columns.items():
+                data_type = StandardDataType(type_map[col.data_type])
+                m_col = ViewColumnMetadata(col.name, data_type, col.order, col.length)
+                m_view.columns[m_col.name] = m_col
+
+            meta.views[m_view.name] = m_view
+
+        for _, table in data.tables.items():
+            m_table = TableMetaData(table.name)
+
+            for _, col in table.columns.items():
+                data_type = StandardDataType(type_map[col.data_type])
+                m_col = ColumnMetadata(col.name, data_type, col.length, col.is_nullable, col.is_unique,
+                                       col.is_auto, col.is_primary)
+                m_table.columns[m_col.name] = m_col
+
+            for index in table.indexes:
+                m_index = IndexMetadata(index.name, is_primary=index.is_primary, is_unique=index.is_unique)
+                m_index.columns.extend(index.columns)
+
+                m_table.indexes.append(m_index)
+
+            for key in table.foreign_keys:
+                m_key = ForeignKeyMetadata(key.name, key.column, key.foreign_table, key.foreign_column)
+                m_table.foreign_keys.append(m_key)
+
+            meta.tables[m_table.name] = m_table
+
+        return meta
+
+    def extract(self, con: IConnection) -> Database:
+        """
+        This method extracts the database metadata
+        """
+        db_file = Path(con.host)
         if not db_file.exists():
-            raise DatabaseNotFoundError(f"The following database could not be located: {conn.host}")
+            raise DatabaseNotFoundError(f"The following database could not be located: {con.host}")
 
-        con = sqlite3.connect(conn.host)
-        con.row_factory = sqlite3.Row
+        db_con = sqlite3.connect(con.host)
+        db_con.row_factory = sqlite3.Row
 
-        db = Database(conn.database, DatabaseType.SQLite)
+        db = Database(con.database, DatabaseType.SQLite)
 
         # Tables
-        table_names = self._get_table_names(con)
+        table_names = self._get_table_names(db_con)
         for name in table_names:
-            db.tables[name] = self._get_table(con, name)
+            db.tables[name] = self._get_table(db_con, name)
 
         # Views
-        view_names = self._get_view_names(con)
+        view_names = self._get_view_names(db_con)
         for name in view_names:
-            db.views[name] = self._get_view(con, name)
+            db.views[name] = self._get_view(db_con, name)
 
         return db

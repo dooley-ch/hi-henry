@@ -16,7 +16,7 @@ __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
 
-__all__ = ['DataTypeMap']
+__all__ = ['DataTypeMap', 'StandardDataType']
 
 from enum import Enum
 import attrs

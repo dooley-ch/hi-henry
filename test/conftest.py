@@ -20,6 +20,7 @@ from pathlib import Path
 import attrs
 import pytest
 from hi_henry.src.model import DataTypeMap
+from hi_henry.src.data_maps import TypeMap
 
 
 @pytest.fixture(scope="session")
@@ -122,3 +123,14 @@ def sample_data_map_2() -> DataTypeMap:
     record.map['BLOB'] = 'Binary'
 
     return record
+
+
+@pytest.fixture(scope="session")
+def sample_type_map():
+    map = TypeMap("SQLite_To_Standard", "SQLite", "Standard", "String")
+    map['INTEGER'] = "Integer"
+    map['REAL'] = "Float"
+    map['TEXT'] = "String"
+    map['BLOB'] = "Binary"
+
+    return map

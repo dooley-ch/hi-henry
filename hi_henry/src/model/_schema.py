@@ -53,7 +53,8 @@ class ViewColumn:
     name: str = attrs.field(validator=[attrs.validators.instance_of(str)])
     data_type: str = attrs.field(validator=[attrs.validators.instance_of(str)])
     order: int = attrs.field(validator=[attrs.validators.instance_of(int)])
-    length: int | None = attrs.field(default=None,validator=[attrs.validators.optional(attrs.validators.instance_of(int))])
+    length: int | None = attrs.field(default=None,
+                                     validator=[attrs.validators.optional(attrs.validators.instance_of(int))])
     comment: str | None = attrs.field(default=None,
                                       validator=attrs.validators.optional(attrs.validators.instance_of(str)))
 
@@ -83,7 +84,8 @@ class Column:
     name: str = attrs.field(validator=[attrs.validators.instance_of(str)])
     data_type: str = attrs.field(validator=[attrs.validators.instance_of(str)])
     order: int = attrs.field(validator=[attrs.validators.instance_of(int)])
-    length: int | None = attrs.field(default=None,validator=[attrs.validators.optional(attrs.validators.instance_of(int))])
+    length: int | None = attrs.field(default=None,
+                                     validator=[attrs.validators.optional(attrs.validators.instance_of(int))])
     is_nullable: bool = attrs.field(default=False, validator=[attrs.validators.instance_of(bool)])
     is_key: bool = attrs.field(default=False, validator=[attrs.validators.instance_of(bool)])
     is_unique: bool = attrs.field(default=False, validator=[attrs.validators.instance_of(bool)])
