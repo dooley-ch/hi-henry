@@ -129,3 +129,15 @@ class TestPostgreSqlExplorerTable:
 
         assert index.name == 'album_pkey'
         assert index.is_unique
+
+
+class TestPostgreSqlStandardSchema:
+    def test_standard_schema(self, postgresql_connection: model.IConnection, sample_postgresql_type_map) -> None:
+        explorer = plugin.PostgreSqlDatabaseExplorer()
+        schema = explorer.to_standard_schema(postgresql_connection, sample_postgresql_type_map)
+
+        assert schema
+        assert schema.name == "mistral"
+        assert schema.type == model.DatabaseType.PostgreSQL
+        assert len(schema.views) == 2
+        assert len(schema.tables) == 27

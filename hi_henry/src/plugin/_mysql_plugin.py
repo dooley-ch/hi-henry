@@ -255,7 +255,7 @@ class MySQLDatabaseExplorer:
         for _, view in data.views.items():
             m_view = ViewMetaData(view.name)
             for _, col in view.columns.items():
-                data_type = StandardDataType(type_map[col.data_type])
+                data_type = StandardDataType(type_map[col.data_type.upper()])
                 m_col = ViewColumnMetadata(col.name, data_type, col.order, col.length)
                 m_view.columns[m_col.name] = m_col
 
@@ -265,7 +265,7 @@ class MySQLDatabaseExplorer:
             m_table = TableMetaData(table.name)
 
             for _, col in table.columns.items():
-                data_type = StandardDataType(type_map[col.data_type])
+                data_type = StandardDataType(type_map[col.data_type.upper()])
                 m_col = ColumnMetadata(col.name, data_type, col.length, col.is_nullable, col.is_unique,
                                        col.is_auto, col.is_primary)
                 m_table.columns[m_col.name] = m_col

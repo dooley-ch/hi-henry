@@ -172,3 +172,30 @@ def sample_mysql_type_map():
     map['TIME'] = "Integer"
 
     return map
+
+
+@pytest.fixture(scope="session")
+def sample_postgresql_type_map():
+    map = TypeMap("MySQL_To_Standard", "MySQL", "Standard", "String")
+    map['SMALLINT'] = 'Integer'
+    map['INTEGER'] = 'Integer'
+    map['BIGINT'] = 'Integer'
+    map['DECIMAL'] = 'Integer'
+    map['INTEGER'] = 'Integer'
+    map['REAL'] = 'Float'
+    map['DOUBLE'] = 'Float'
+    map['SMALLSERIAL'] = 'Integer'
+    map['SERIAL'] = 'Integer'
+    map['MONEY'] = 'Integer'
+    map['CHAR'] = 'String'
+    map['VARCHAR'] = 'String'
+    map['TEXT'] = 'String'
+    map['BYTEA'] = 'Binary'
+    map['TIMESTAMP WITHOUT TIMEZONE'] = 'DateTime'
+    map['TIMESTAMP WITH TIMEZONE'] = 'DateTime'
+    map['TIME WITHOUT TIMEZONE'] = 'DateTime'
+    map['TIME WITH TIMEZONE'] = 'DateTime'
+    map['DATE'] = 'Date'
+    map['BOOLEAN'] = 'Boolean'
+
+    return map

@@ -23,8 +23,11 @@ from typing import Any
 
 import attrs
 import psycopg2
+
+from ..data_maps import TypeMap
 from ..model import ViewColumn, View, Column, Index, ForeignKey, Table, Database, IConnection, DatabaseType, \
-    DatabaseInfo, SchemaInfo
+    DatabaseInfo, SchemaInfo, DatabaseMetadata, ViewMetaData, ViewColumnMetadata, TableMetaData, ColumnMetadata, \
+    IndexMetadata, ForeignKeyMetadata, StandardDataType
 from ..errors import DatabaseNotFoundError, SchemaNotFoundError
 
 
@@ -287,6 +290,46 @@ class PostgreSqlDatabaseExplorer:
                     columns.append(ViewColumn(col_name, col_type, order, length))
 
         return columns
+
+    def to_standard_schema(self, con: IConnection, type_map: TypeMap) -> DatabaseMetadata:
+        """
+        This method returns the database schema in a standard format
+        """
+        data = self.extract(con)
+
+        meta = DatabaseMetadata(data.name, data.type)
+
+        for _, view in data.views.items():
+            m_view = ViewMetaData(view.name)
+            for _, col in view.columns.items():
+                data_type = StandardDataType(type_map[col.data_type.upper()])
+                m_col = ViewColumnMetadata(col.name, data_type, col.order, col.length)
+                m_view.columns[m_col.name] = m_col
+
+            meta.views[m_view.name] = m_view
+
+        for _, table in data.tables.items():
+            m_table = TableMetaData(table.name)
+
+            for _, col in table.columns.items():
+                data_type = StandardDataType(type_map[col.data_type.upper()])
+                m_col = ColumnMetadata(col.name, data_type, col.length, col.is_nullable, col.is_unique,
+                                       col.is_auto, col.is_primary)
+                m_table.columns[m_col.name] = m_col
+
+            for index in table.indexes:
+                m_index = IndexMetadata(index.name, is_primary=index.is_primary, is_unique=index.is_unique)
+                m_index.columns.extend(index.columns)
+
+                m_table.indexes.append(m_index)
+
+            for key in table.foreign_keys:
+                m_key = ForeignKeyMetadata(key.name, key.column, key.foreign_table, key.foreign_column)
+                m_table.foreign_keys.append(m_key)
+
+            meta.tables[m_table.name] = m_table
+
+        return meta
 
     def extract(self, con: IConnection) -> Database | None:
         """
