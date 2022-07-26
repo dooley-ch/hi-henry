@@ -130,3 +130,15 @@ class TestMySQLExplorerTable:
 
         assert index.name == 'artist_album'
         assert not index.is_unique
+
+
+class TestMySQLStandardSchema:
+    def test_standard_schema(self, mysql_connection: model.IConnection, sample_mysql_type_map) -> None:
+        explorer = plugin.MySQLDatabaseExplorer()
+        schema = explorer.to_standard_schema(mysql_connection, sample_mysql_type_map)
+
+        assert schema
+        assert schema.name == "mistral"
+        assert schema.type == model.DatabaseType.MySQL
+        assert len(schema.views) == 2
+        assert len(schema.tables) == 27

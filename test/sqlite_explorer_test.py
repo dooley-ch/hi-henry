@@ -134,9 +134,9 @@ class TestSQLiteExplorerTable:
 
 
 class TestSQLiteStandardSchema:
-    def test_standard_schema(self, sqlite_connection: model.IConnection, sample_type_map: data_maps.TypeMap) -> None:
+    def test_standard_schema(self, sqlite_connection: model.IConnection, sample_sqlite_type_map) -> None:
         explorer = plugin.SQLiteDatabaseExplorer()
-        schema = explorer.to_standard_schema(sqlite_connection, sample_type_map)
+        schema = explorer.to_standard_schema(sqlite_connection, sample_sqlite_type_map)
 
         assert schema
         assert schema.name == "mistral"

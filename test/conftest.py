@@ -126,11 +126,49 @@ def sample_data_map_2() -> DataTypeMap:
 
 
 @pytest.fixture(scope="session")
-def sample_type_map():
+def sample_sqlite_type_map():
     map = TypeMap("SQLite_To_Standard", "SQLite", "Standard", "String")
     map['INTEGER'] = "Integer"
     map['REAL'] = "Float"
     map['TEXT'] = "String"
     map['BLOB'] = "Binary"
+
+    return map
+
+
+@pytest.fixture(scope="session")
+def sample_mysql_type_map():
+    map = TypeMap("MySQL_To_Standard", "MySQL", "Standard", "String")
+    map['CHAR'] = 'String'
+    map['VARCHAR'] = 'String'
+    map['BINARY'] = 'String'
+    map['VARBINARY'] = 'String'
+    map['TINYBLOB'] = 'String'
+    map['TINYTEXT'] = 'String'
+    map['TEXT'] = 'String'
+    map['BLOB'] = 'String'
+    map['MEDIUMTEXT'] = 'String'
+    map['MEDIUMBLOB'] = 'String'
+    map['LONGTEXT'] = 'String'
+    map['LONGBLOB'] = 'String'
+    map['ENUM'] = 'String'
+    map['BIT'] = 'Integer'
+    map['TINYINT'] = 'Integer'
+    map['BOOL'] = 'Integer'
+    map['BOOLEAN'] = 'Integer'
+    map['SMALLINT'] = 'Integer'
+    map['MEDIUMINT'] = 'Integer'
+    map['INT'] = 'Integer'
+    map['INTEGER'] = 'Integer'
+    map['BIGINT'] = 'Integer'
+    map['FLOAT'] = "Float"
+    map['DOUBLE'] = "Float"
+    map['DECIMAL'] = "Decimal"
+    map['DEC'] = "Float"
+    map['DATE'] = "Date"
+    map['DATETIME'] = "DateTime"
+    map['TIMESTAMP'] = "TimeStamp"
+    map['TIME'] = "DateTime"
+    map['TIME'] = "Integer"
 
     return map
